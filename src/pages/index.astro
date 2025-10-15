@@ -1,16 +1,165 @@
 ---
+import { MainLayout } from "@/layouts";
+import { is, titleTemplate } from "@/utils/functions";
+import { Image } from "astro:assets";
 
+import { HeroImg } from '@/assets';
+
+import { db } from "@/db";
+import { categoriesTable, postsTable } from "@/db/schema";
+import { category_bg } from "@/utils/colors";
+import { format } from "@/utils/date";
+import { blog_url } from "@/utils/urls";
+import { desc, eq } from 'drizzle-orm';
+
+// SEED FUNCTION
+// const categories = await seedCategories(db)
+// const posts = await seedPosts(db, categories)
+// console.log(`\n\n---------------------------------\n\n CATEGORIES: ${categories.length}\n\n POSTS: ${posts?.length}\n\n----------------------------------------`)
+
+const featuredPosts =(await db
+	.select({ 
+		title: postsTable.title, 
+		slug: postsTable.slug, 
+		category: { 
+			title: categoriesTable.title, 
+			slug: categoriesTable.slug,
+		} ,
+		image: postsTable.thumbnailUrl,
+		createdAt: postsTable.createdAt,
+		readingTime: postsTable.readingTime,
+		snippet: postsTable.snippet
+	})
+	.from(postsTable)
+	.orderBy(
+		desc(postsTable.createdAt)
+	)
+	.limit(4)
+	.innerJoin(
+		categoriesTable, 
+		eq(postsTable.categoryId, categoriesTable.id)
+	)).map((d) => ({ 
+		...d, 
+		category: { 
+			...d.category, 
+			bg: category_bg(d.category.slug)
+		}
+	}));
+	
+// console.log(featuredPosts[0])
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout
+	title={titleTemplate()}
+	metas={[
+		{ name: "title", content: "The Osee Archives: Architecture, Code & Creative Works by Lazaro Osee" },
+		{ name: "description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
+		{ name: "canonical", content: "https://blog.lazaroosee.xyz/" },
+		{ name: "robots", content: "index, follow" }
+	]}
+>
+	<main class="w-full h-full">
+		<!-- TODO: keep the orignal hero commented for reference -->
+		{/* 1. Original hero */}
+		{/* <section class="flex flex-row w-full h-auto aspect-auto border-b-2">
+			<div class="hidden md:block flex-1 w-full h-[inherit] p-auto bg-red-400 border-r-2">
+				<Image src={HeroImg} width={800} height={500} format="webp" quality={100} alt="arhcitecture and code" class="w-full h-full object-cover" />
+			</div>
+			<div class="flex-1 w-full h-full">
+				<h1 class="block leading-tight px-4 py-8 text-balance font-playfair font-bold border-b-2">
+					Bridging structure and Syntax
+				</h1>
+				<p class="leading-tight px-4 py-8 border-b-2">
+					Design, Code, and the archive of Creation
+				</p>
+				<div class="block h-full px-4">
+					<div class="flex w-fit py-8 border-l-2 border-r-2">
+						<button class="flex h-fit items-center justify-center border-t-2 border-b-2 font-oswald font-semibold uppercase text-white px-4 py-8 bg-slate-800 hover:bg-slate-900 focus-visible:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 cursor-pointer leading-tight">
+							explore the latest posts
+						</button>
+					</div>
+				</div>
+			</div>
+		</section> */}
+		{/* 1. "Golden Ratio" Hero */}
+		<section class="flex flex-row w-full h-auto aspect-auto border-b-2">
+			<div class="hidden md:block flex-1 w-full h-[inherit] p-auto border-r-2">
+				<Image src={HeroImg} width={800} height={500} format="webp" quality={100} loading={"eager"} alt="arhcitecture and code" class="w-full h-full object-cover" />
+			</div>
+			<div class="flex-1 aspect-auto w-full h-inherit grid grid-rows-2 grid-cols-1">
+				<h1 class="block row-span-1 leading-tight px-5 py-10 sm:px-8 sm:py-16 text-balance font-playfair font-bold border-b-2">
+					Bridging structure and Syntax
+				</h1>
+				<div class="row-span-1 grid grid-cols-2 grid-rows-1">
+					<p class="flex flex-col leading-tight text-2xl text-balance text-center font-semibold font-roboto justify-center p-2 order-2 border-l-2">
+						Design, Code, and the archive of Creation
+					</p>
+					<div class="h-full grid grid-rows-2 grid-cols-1 place-content-center place-items-center justify-center items-center">
+						<div class="border-b-2 w-full h-full"></div>
+						<div class="grid grid-cols-1 grid-rows-1 w-full h-full place-content-center place-items-center justify-center items-center">
+							<button class="flex h-fit items-center justify-center border-2 font-oswald font-semibold uppercase text-white m-2 px-4 py-3 rounded-md bg-slate-800 hover:bg-slate-900 focus-visible:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 cursor-pointer leading-tight">
+								explore the latest posts
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* 2. Curator's Pick */}
+		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto border-b-2">
+			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
+			<div class="relative flex flex-col w-full items-center justify-center mt-6">
+				<ul class="curator-carousel relative gap-4 w-full p-4 grid grid-flow-col overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth scroll-ps-4 snap-x snap-mandatory transition-all duration-1000 ease-in-out">
+					{featuredPosts && featuredPosts.map((post) => (
+						<li class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
+							<article class="contents">
+								<span class:list={[
+									"absolute -top-2 -right-2 px-3 py-1 rounded-full", 
+									{'dark:bg-lime-800 dark:border-lime-400 bg-lime-400 border-lime-800  border-1': is(post.category.slug, 'architecture')},
+									{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(post.category.slug, 'code')},
+									{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(post.category.slug, 'personal')},
+									{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(post.category.slug, 'writing')},
+								]}>
+									{post.category.title}
+								</span>
+								<div class="col-1 row-span-full w-full h-full aspect-auto rounded-md overflow-hidden">
+									<Image src={post.image} alt={post.title ?? ""} width={600} height={400} fit="cover" class="w-full h-full aspect-auto object-cover" />
+								</div>
+								<div class="col-1 row-span-full p-2 text-white dark:text-black bg-black/96 dark:bg-white/96 rounded-md overflow-hidden">
+									<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
+										<a href={blog_url(post.slug, post.createdAt)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{post.title}</a>
+									</h3>
+									<p class="text-md leading-6 font-inter py-2">
+										{post.snippet}
+									</p>
+									<hr>
+									<div class="flex w-full py-2 justify-between items-center-safe text-sm font-lora font-semibold">
+										<time datetime={post.createdAt.toISOString()} class="px-2">
+											{format(post.createdAt)}
+										</time>
+										<span class="px-2">
+											{post.readingTime} min read
+										</span>
+									</div>
+								</div>
+							</article>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+
+		{/* 3. The Content Display */}
+		<section class="flex flex-col items-center justify-center w-full h-auto aspect-auto border-b-2">
+			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">
+				Blog Posts
+			</h2>
+			<div class="grid h-120">
+				<header class="">
+
+				</header>
+			</div>
+		</section>
+	</main>
+</MainLayout>

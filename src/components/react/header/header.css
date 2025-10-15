@@ -1,0 +1,11 @@
+.anchor {
+	anchor-name: --menu-anchor;
+}
+.target {
+	position: absolute;
+	position-anchor: --menu-anchor;
+	position-visibility: anchors-visible;
+	position-area: y-end x-start;
+	top: anchor(--menu-anchor bottom);
+	right: anchor(--menu-anchor end, 50%);
+}

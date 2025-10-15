@@ -3,12 +3,31 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:push": "drizzle-kit push"
   },
   "dependencies": {
-    "astro": "^5.14.4"
+    "@astrojs/markdoc": "^0.15.8",
+    "@astrojs/netlify": "^6.5.12",
+    "@astrojs/react": "^4.4.0",
+    "@supabase/supabase-js": "^2.75.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "astro": "^5.14.4",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.6",
+    "postgres": "^3.4.7",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.14"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.5"
   }
 }

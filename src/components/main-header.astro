@@ -1,0 +1,32 @@
+---
+import type { Link } from '@/types/shared';
+import { Navbar } from './react/header/header';
+
+const categories = [
+    // Core content categories (The Archives)
+    {href: "/architecture", label: "Architecture"},
+    {href: "/code-and-ai", label: "Code & AI"},
+    {href: "/writing-and-poetry", label: "Writing and Poetry"},
+    {href: "/math", label: "Math"},
+]
+
+const links: Link[] = [
+    // Core content categories (The Archives)
+    // {href: "/", label: "Home"},
+    {href: "/categories", label: "Categories"},
+
+    // Personal & Administartive links
+    {href: "/about", label: "About"},
+    {href: "/contact", label: "Contact"},
+    {href: "/resources", label: "Resources"},
+
+    // project / Portfolio links (Showcasing Work)
+    // {href: "/projects", label: "Projects"},
+    // {href: "/models-and-art", label: "Models & Art"},
+]
+---
+
+<header class="relative w-full flex justify-between items-center border-b-2">
+    <a href="/" class="mr-auto uppercase font-playfair font-semibold text-xl px-4">the osee archives</a>
+    <Navbar {links} client:load />
+</header>

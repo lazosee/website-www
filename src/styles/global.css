@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@import 'tailwindcss';
+
+@theme {
+	--font-system: system-ui;
+	--font-open-sans: 'Open Sans', sans-serif;
+	--font-roboto: 'Roboto', sans-serif;
+	--font-inter: 'Inter', sans-serif;
+	--font-mono: 'Roboto Mono', monospace;
+	--font-lora: 'Lora', sans-serif;
+	--font-oswald: 'Oswald', sans-serif;
+	--font-playfair: 'Playfair Display', sans-serif;
+
+	--breakpoint-xs: 32rem /* 512px*/;
+}
+
+@layer base {
+	* {
+		@apply p-0 m-0;
+		/* @apply border-none!; */
+	}
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-semibold font-playfair;
+	}
+	h1 {
+		@apply text-6xl;
+	}
+	h2 {
+		@apply text-5xl leading-relaxed;
+	}
+	h3 {
+		@apply text-4xl leading-normal;
+	}
+}
+
+/* Navbar Categories Dropdown */
+.categories-anchor {
+	anchor-name: --categories-anchor;
+}
+.categories-dropdown {
+	position-anchor: --categories-anchor;
+}
+/* Curator's Picks Carousel */
+.curator-carousel {
+	& {
+		scroll-marker-group: after;
+	}
+	&::scroll-marker-group {
+		@apply flex w-full h-8 items-center justify-center;
+	}
+	& > li::scroll-marker {
+		content: ' ';
+		@apply bg-slate-100 dark:bg-slate-900 w-3 h-3 rounded-full py-0.5 px-2 m-2 border-[0.2rem] border-black dark:border-white;
+	}
+	& > li::scroll-marker:target-current {
+		@apply border-[0.2rem] bg-fuchsia-400 dark:bg-fuchsia-800;
+	}
+	/* &::scroll-button(left) {
+		& {
+			content: url(../assets/icons/arrow-left.svg) / 'Scroll Left';
+			@apply absolute float-start left-2 -top-10 w-18 h-12  flex items-center justify-center border-1 border-current bg-transparent text-black dark:text-white!;
+		}
+		&:disabled {
+			@apply text-gray-300 bg-gray-400;
+		}
+	}
+	&::scroll-button(right) {
+		& {
+			content: url(../assets/icons/arrow-right.svg) / 'Scroll Right';
+			@apply absolute float-end right-2 -top-10 w-18 h-12  flex items-center justify-center border-1 border-current bg-transparent text-black dark:text-white!;
+		}
+		&:disabled,
+		&:muted {
+			@apply text-gray-300 bg-gray-400;
+		}
+	}
+	&::scroll-button(*):focus-visible {
+		outline-offset: 5px;
+	} */
+}
