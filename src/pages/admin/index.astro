@@ -1,0 +1,31 @@
+---
+import { MainLayout } from "@/layouts";
+import { titleTemplate } from "@/utils/functions";
+
+---
+
+<MainLayout title={titleTemplate('Admin')} metas={[]}>
+    <div class="">
+        <aside class=""></aside>
+        <main class="">
+            <section class="gallery">
+                <h2>New Gallery Item</h2>
+                <!-- 
+                    id -> uuid
+                    title -> varchar(200)
+                    slug -> varchar(255)
+                    category -> varchar(150)
+                    image_href -> varchar(400)
+                 -->
+                <ul>
+                    <li>1</li>
+                    <li>1</li>
+                    <li>1</li>
+                    <li>1</li>
+                    <li>1</li>
+                    <li>1</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+</MainLayout>

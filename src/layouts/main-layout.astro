@@ -1,7 +1,7 @@
 ---
 import "@/styles/global.css";
 import type { Meta, Title } from "@/types/head";
-import { MainHeader } from "../components";
+import { MainFooter, MainHeader } from "../components";
 
 type Props = {
     title: Title;
@@ -33,5 +33,6 @@ const { title, metas } = Astro.props;
 	<body class="w-full h-full min-h-screen p-0 m-0 border-2 text-lg font-roboto text-black dark:text-white bg-slate-300 dark:bg-slate-950 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
         <MainHeader />
 		<slot />
+		<MainFooter />
 	</body>
 </html>

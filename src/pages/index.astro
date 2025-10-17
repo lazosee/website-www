@@ -5,52 +5,30 @@ import { Image } from "astro:assets";
 
 import { HeroImg } from '@/assets';
 
-import { db } from "@/db";
-import { categoriesTable, postsTable } from "@/db/schema";
-import { category_bg } from "@/utils/colors";
+import { getAllCategories, getAllPosts, getFeaturedPosts, getPostsByCategory } from "@/db/select";
 import { format } from "@/utils/date";
 import { blog_url } from "@/utils/urls";
-import { desc, eq } from 'drizzle-orm';
 
 // SEED FUNCTION
 // const categories = await seedCategories(db)
 // const posts = await seedPosts(db, categories)
 // console.log(`\n\n---------------------------------\n\n CATEGORIES: ${categories.length}\n\n POSTS: ${posts?.length}\n\n----------------------------------------`)
 
-const featuredPosts =(await db
-	.select({ 
-		title: postsTable.title, 
-		slug: postsTable.slug, 
-		category: { 
-			title: categoriesTable.title, 
-			slug: categoriesTable.slug,
-		} ,
-		image: postsTable.thumbnailUrl,
-		createdAt: postsTable.createdAt,
-		readingTime: postsTable.readingTime,
-		snippet: postsTable.snippet
-	})
-	.from(postsTable)
-	.orderBy(
-		desc(postsTable.createdAt)
-	)
-	.limit(4)
-	.innerJoin(
-		categoriesTable, 
-		eq(postsTable.categoryId, categoriesTable.id)
-	)).map((d) => ({ 
-		...d, 
-		category: { 
-			...d.category, 
-			bg: category_bg(d.category.slug)
-		}
-	}));
-	
-// console.log(featuredPosts[0])
+const featuredPosts = await getFeaturedPosts(4)
+const categories = await getAllCategories()
+const allPosts = await (async () => {
+	const {searchParams} = new URL(Astro.request.url);
+	if (searchParams.get('category')) {
+		const category = searchParams.get('category') as string;
+		return (await getPostsByCategory(category))
+	} else {
+		return (await getAllPosts());
+	}
+})()
 ---
 
 <MainLayout
-	title={titleTemplate()}
+	title={titleTemplate('H')}
 	metas={[
 		{ name: "title", content: "The Osee Archives: Architecture, Code & Creative Works by Lazaro Osee" },
 		{ name: "description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
@@ -107,7 +85,7 @@ const featuredPosts =(await db
 		</section>
 
 		{/* 2. Curator's Pick */}
-		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto border-b-2">
+		<!-- <section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto border-b-2">
 			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
 			<div class="relative flex flex-col w-full items-center justify-center mt-6">
 				<ul class="curator-carousel relative gap-4 w-full p-4 grid grid-flow-col overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth scroll-ps-4 snap-x snap-mandatory transition-all duration-1000 ease-in-out">
@@ -124,7 +102,7 @@ const featuredPosts =(await db
 									{post.category.title}
 								</span>
 								<div class="col-1 row-span-full w-full h-full aspect-auto rounded-md overflow-hidden">
-									<Image src={post.image} alt={post.title ?? ""} width={600} height={400} fit="cover" class="w-full h-full aspect-auto object-cover" />
+									<Image src={post.image} alt={post.title ?? ""} width={600} height={400} fit="cover" quality={100} class="w-full h-full aspect-auto object-cover" />
 								</div>
 								<div class="col-1 row-span-full p-2 text-white dark:text-black bg-black/96 dark:bg-white/96 rounded-md overflow-hidden">
 									<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
@@ -148,18 +126,104 @@ const featuredPosts =(await db
 					))}
 				</ul>
 			</div>
+		</section> -->
+
+		{/* 2. Curator's Pick(2.0) (FLEX) */}
+		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto border-b-2">
+			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
+			<div class="relative flex flex-wrap w-full items-center justify-center mt-6">
+				{featuredPosts && featuredPosts.map((f, i) => (
+					<article class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
+						<span class:list={[
+							"absolute -top-2 -right-2 px-3 py-1 rounded-full", 
+							{'dark:bg-lime-800 dark:border-lime-400 bg-lime-400 border-lime-800  border-1': is(f.category.slug, 'architecture')},
+							{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(f.category.slug, 'code')},
+							{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(f.category.slug, 'personal')},
+							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category.slug, 'writing')},
+						]}>
+							{f.category.title}
+						</span>
+						<div class="col-1 row-span-full w-full h-full aspect-auto rounded-md overflow-hidden">
+							<Image src={f.image} alt={f.title ?? ""} width={600} height={400} fit="cover" quality={100} class="w-full h-full aspect-auto object-cover" />
+						</div>
+						<div class="col-1 row-span-full p-2 text-white dark:text-black bg-black/96 dark:bg-white/96 rounded-md overflow-hidden">
+							<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
+								<a href={blog_url(f.slug, f.createdAt)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{f.title}</a>
+							</h3>
+							<p class="text-md leading-6 font-inter py-2">
+								{f.snippet}
+							</p>
+							<hr>
+							<div class="flex w-full py-2 justify-between items-center-safe text-sm font-lora font-semibold">
+								<time datetime={f.createdAt.toISOString()} class="px-2">
+									{format(f.createdAt)}
+								</time>
+								<span class="px-2">
+									{f.readingTime} min read
+								</span>
+							</div>
+						</div>
+					</article>
+				))}
+				<div class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
+					<a href="/posts" class="place-self-center flex items-center justify-center uppercase border-2 rounded-full px-8 py-4 border-none bg-black dark:bg-white text-white dark:text-black hover:bg-slate-900 focus-visible:bg-slate-900 hover:dark:bg-slate-400 focus-visible:dark:bg-slate-400">view all posts</a>
+				</div>
+			</div>
 		</section>
 
 		{/* 3. The Content Display */}
-		<section class="flex flex-col items-center justify-center w-full h-auto aspect-auto border-b-2">
+		<!-- TODO: Move these into "/posts" page -->
+		<!-- <section class="flex flex-col items-center justify-center w-full h-fit aspect-auto border-b-2">
 			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">
 				Blog Posts
 			</h2>
-			<div class="grid h-120">
-				<header class="">
-
+			<div id="posts" class="grid w-full">
+				<header class="font-lora block justify-center items-center content-center justify-items-center border-none border-b-2 border-slate-800 dark:border-slate-400">
+					<ul class="hidden sm:flex max-w-3xl w-full p-2 list-none gap-2">
+						<li>
+							<h3 class="text-lg font-inter font-light">
+								<a href="/">All</a>
+							</h3>
+						</li>
+						{ categories && categories.map((c, i) => (
+							<li>
+								<h3 class="text-lg font-inter font-light">
+									<a href={`/?category=${c.slug}`}>{c.title}</a>
+								</h3>
+							</li>
+						)) }
+					</ul>
 				</header>
+					{/* <hr> */}
+				<main class="block items-center justify-center justify-items-center content-center">
+					{allPosts && allPosts.map((p, i) => (
+						<article id={` bgpost-${i}-${p.slug}`} class="block content-center justify-items-center mx-2 my-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-slate-400/80 dark:bg-slate-800 rounded-lg">
+							<div class="block p-2 h-inherit">
+								<h4 class="font-lora text-xl mb-4 hover:underline focus-visible:underline underline-offset-2">
+									<a href={blog_url(p.slug, p.createdAt)}>
+										{p.title}
+									</a>
+								</h4>
+								<p class="text-md">{p.snippet}</p>
+							</div>
+							<div class="flex w-full my-2 py-2 justify-between items-center-safe text-sm font-lora font-semibold">
+								<time datetime={p.createdAt.toISOString()} class="px-2">
+									{format(p.createdAt)}
+								</time>
+								<span class="px-2">
+									{p.readingTime} min read
+								</span>
+							</div>
+						</article>
+					))}
+				</main>
+				<pre>
+					{/* {JSON.stringify(allPosts[0], null, 2)} */}
+				</pre>
 			</div>
-		</section>
+		</section> -->
+	
+		<section class=""></section>
+	
 	</main>
 </MainLayout>
