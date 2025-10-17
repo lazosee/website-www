@@ -5,7 +5,7 @@ import { Image } from "astro:assets";
 
 import { HeroImg } from '@/assets';
 
-import { getAllCategories, getAllPosts, getFeaturedPosts, getPostsByCategory } from "@/db/select";
+import { getFeaturedPosts } from "@/db/select";
 import { format } from "@/utils/date";
 import { blog_url } from "@/utils/urls";
 
@@ -15,16 +15,6 @@ import { blog_url } from "@/utils/urls";
 // console.log(`\n\n---------------------------------\n\n CATEGORIES: ${categories.length}\n\n POSTS: ${posts?.length}\n\n----------------------------------------`)
 
 const featuredPosts = await getFeaturedPosts(4)
-const categories = await getAllCategories()
-const allPosts = await (async () => {
-	const {searchParams} = new URL(Astro.request.url);
-	if (searchParams.get('category')) {
-		const category = searchParams.get('category') as string;
-		return (await getPostsByCategory(category))
-	} else {
-		return (await getAllPosts());
-	}
-})()
 ---
 
 <MainLayout
@@ -128,8 +118,11 @@ const allPosts = await (async () => {
 			</div>
 		</section> -->
 
+		{/* 5. Short About Me */}
+		<section class=""></section>
+
 		{/* 2. Curator's Pick(2.0) (FLEX) */}
-		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto border-b-2">
+		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto bg-white dark:bg-slate-900">
 			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
 			<div class="relative flex flex-wrap w-full items-center justify-center mt-6">
 				{featuredPosts && featuredPosts.map((f, i) => (
@@ -171,59 +164,22 @@ const allPosts = await (async () => {
 			</div>
 		</section>
 
-		{/* 3. The Content Display */}
-		<!-- TODO: Move these into "/posts" page -->
-		<!-- <section class="flex flex-col items-center justify-center w-full h-fit aspect-auto border-b-2">
-			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">
-				Blog Posts
-			</h2>
-			<div id="posts" class="grid w-full">
-				<header class="font-lora block justify-center items-center content-center justify-items-center border-none border-b-2 border-slate-800 dark:border-slate-400">
-					<ul class="hidden sm:flex max-w-3xl w-full p-2 list-none gap-2">
-						<li>
-							<h3 class="text-lg font-inter font-light">
-								<a href="/">All</a>
-							</h3>
-						</li>
-						{ categories && categories.map((c, i) => (
-							<li>
-								<h3 class="text-lg font-inter font-light">
-									<a href={`/?category=${c.slug}`}>{c.title}</a>
-								</h3>
-							</li>
-						)) }
-					</ul>
-				</header>
-					{/* <hr> */}
-				<main class="block items-center justify-center justify-items-center content-center">
-					{allPosts && allPosts.map((p, i) => (
-						<article id={` bgpost-${i}-${p.slug}`} class="block content-center justify-items-center mx-2 my-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-slate-400/80 dark:bg-slate-800 rounded-lg">
-							<div class="block p-2 h-inherit">
-								<h4 class="font-lora text-xl mb-4 hover:underline focus-visible:underline underline-offset-2">
-									<a href={blog_url(p.slug, p.createdAt)}>
-										{p.title}
-									</a>
-								</h4>
-								<p class="text-md">{p.snippet}</p>
-							</div>
-							<div class="flex w-full my-2 py-2 justify-between items-center-safe text-sm font-lora font-semibold">
-								<time datetime={p.createdAt.toISOString()} class="px-2">
-									{format(p.createdAt)}
-								</time>
-								<span class="px-2">
-									{p.readingTime} min read
-								</span>
-							</div>
-						</article>
-					))}
-				</main>
-				<pre>
-					{/* {JSON.stringify(allPosts[0], null, 2)} */}
-				</pre>
-			</div>
-		</section> -->
-	
+		{/* 4. GAllery Preview */}
 		<section class=""></section>
-	
+
+		{/* 6. contact CTA */}
+		<section class="content-center justify-items-center">
+			<div class="flex flex-col max-w-4xl w-full p-4 sm:my-8 sm:py-12">
+				<h2 class="block leading-tight sm:leading-normal md:leading-relaxed my-4">
+					Idea Overflow? Share Your Thoughts.
+				</h2>
+				<p class="capitalize">
+					Send a message to talk about design, development, or creative writing—let's make something happen.
+				</p>
+				<a href="/contact" class="block max-w-xs w-auto content-center justify-items-center px-8 py-4 mt-8 mb-4 sm:mt-12 border-none rounded-sm text-white bg-black dark:text-black dark:bg-white hover:bg-black/70 dark:hover:bg-white/70">
+					<span class="flex w-auto uppercase font-open-sans font-semibold">Let's get talking</span>
+				</a>
+			</div>
+		</section>
 	</main>
 </MainLayout>
