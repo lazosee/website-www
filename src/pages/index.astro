@@ -15,10 +15,11 @@ import { blog_url } from "@/utils/urls";
 // console.log(`\n\n---------------------------------\n\n CATEGORIES: ${categories.length}\n\n POSTS: ${posts?.length}\n\n----------------------------------------`)
 
 const featuredPosts = await getFeaturedPosts(4)
+// console.log(featuredPosts[0].image)
 ---
 
 <MainLayout
-	title={titleTemplate('H')}
+	title={titleTemplate()}
 	metas={[
 		{ name: "title", content: "The Osee Archives: Architecture, Code & Creative Works by Lazaro Osee" },
 		{ name: "description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },

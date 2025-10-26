@@ -1,0 +1,42 @@
+@reference './global.css';
+
+article {
+	& {
+	}
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-lora font-light leading-relaxed m-2 mt-8 mb-4;
+	}
+	h1 {
+		@apply text-4xl;
+	}
+	h1 {
+		@apply text-4xl;
+	}
+	h2 {
+		@apply text-3xl;
+	}
+	h3 {
+		@apply text-2xl;
+	}
+	h4 {
+		@apply text-xl;
+	}
+	h5 {
+		@apply text-lg;
+	}
+	h6 {
+		@apply text-[1.1rem];
+	}
+}
+
+pre.shiki {
+	@apply overflow-x-auto p-4 scroll-smooth;
+	scrollbar-width: 2;
+	scrollbar-gutter: auto;
+	scrollbar-color: var(--color-slate-600) transparent;
+}

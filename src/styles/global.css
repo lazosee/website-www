@@ -39,6 +39,12 @@
 	}
 }
 
+@layer components {
+	.h-scrollbar {
+		@apply [&::-webkit-scrollbar]:w-auto [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full;
+	}
+}
+
 /* Navbar Categories Dropdown */
 .categories-anchor {
 	anchor-name: --categories-anchor;

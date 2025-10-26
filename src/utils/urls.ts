@@ -1,3 +1,3 @@
 export function blog_url(slug: string, date: Date) {
-	return `${date.getUTCFullYear()}/${slug}`
+	return `/posts/${date.getUTCFullYear()}/${slug}`
 }

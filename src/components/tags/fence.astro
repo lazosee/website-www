@@ -1,0 +1,24 @@
+---
+import { shiki } from '@/utils/shiki';
+import { codeToHtml } from '@lueur/blog-utils';
+import Copy from '../react/buttons/copy';
+type Props = {
+    content: string;
+    language?: string;
+}
+const { content, language = 'txt' } = Astro.props;
+
+const html = codeToHtml(content, language, { shikiInstance: shiki, theme: 'dracula' })
+---
+
+{ content ? (
+    <figure class="block my-4 overflow-hidden rounded-xl">
+        <figcaption class="flex items-center justify-between p-2 px-4 bg-current/12">
+            <span>{language}</span>
+            <Copy client:load {content} />
+        </figcaption>
+        <div class="" set:html={html}></div>
+    </figure>
+) : (
+    <p></p>
+)}

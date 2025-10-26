@@ -1,0 +1,22 @@
+[
+	{
+		"slug": "code",
+		"title": "Code"
+	},
+	{
+		"slug": "math",
+		"title": "Math"
+	},
+	{
+		"slug": "architecture",
+		"title": "Architecture"
+	},
+	{
+		"slug": "writing",
+		"title": "Writing"
+	},
+	{
+		"slug": "creative-art",
+		"title": "Creative Art"
+	}
+]

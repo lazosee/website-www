@@ -1,0 +1,24 @@
+---
+import { MainLayout, PostLayout } from "@/layouts";
+import { titleTemplate } from "@/utils/functions";
+import { getCollection, getEntry } from "astro:content";
+
+const { year, slug } = Astro.params;
+
+if (!slug || !year) return new Response('Invalid blog slug', { status: 404 })
+// const [RES] = await db.select({ body: postsTable.body }).from(postsTable).where(eq(postsTable.slug, slug!));
+const categories = await getCollection('categories')
+const posts = await getCollection('posts')
+
+const blog = await getEntry('posts', slug)
+
+if (!blog) return new Response(`Blog with slug ${slug} not found!`, { status: 404 });
+
+const { Content, headings, remarkPluginFrontmatter } = await blog.render()
+---
+
+<MainLayout title={titleTemplate(blog.data.title)}>
+    <PostLayout slug={blog.slug} frontmatter={blog.data} {headings}>
+        <Content />
+    </PostLayout>
+</MainLayout>
