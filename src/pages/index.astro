@@ -5,17 +5,24 @@ import { Image } from "astro:assets";
 
 import { HeroImg } from '@/assets';
 
-import { getFeaturedPosts } from "@/db/select";
 import { format } from "@/utils/date";
 import { blog_url } from "@/utils/urls";
+import { calcReadingTime } from "@lueur/blog-utils";
+import { getCollection } from "astro:content";
 
-// SEED FUNCTION
-// const categories = await seedCategories(db)
-// const posts = await seedPosts(db, categories)
-// console.log(`\n\n---------------------------------\n\n CATEGORIES: ${categories.length}\n\n POSTS: ${posts?.length}\n\n----------------------------------------`)
+export const prerender = true;
 
-const featuredPosts = await getFeaturedPosts(4)
-// console.log(featuredPosts[0].image)
+const categories = await getCollection('categories')
+const posts = (await getCollection('posts'))
+	.sort((a, b) => b.data.published_at.valueOf() - a.data.published_at.valueOf())
+	.slice(0, 5)
+	.map((post) => ({
+		slug: post.slug,
+		data: post.data,
+		body: post.body,
+		category: categories.find((c) => c.data.slug == post.slug)?.data
+	}));
+//
 ---
 
 <MainLayout
@@ -126,34 +133,36 @@ const featuredPosts = await getFeaturedPosts(4)
 		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto bg-white dark:bg-slate-900">
 			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
 			<div class="relative flex flex-wrap w-full items-center justify-center mt-6">
-				{featuredPosts && featuredPosts.map((f, i) => (
+				{posts && posts.map((f, i) => (
 					<article class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
 						<span class:list={[
-							"absolute -top-2 -right-2 px-3 py-1 rounded-full", 
-							{'dark:bg-lime-800 dark:border-lime-400 bg-lime-400 border-lime-800  border-1': is(f.category.slug, 'architecture')},
-							{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(f.category.slug, 'code')},
-							{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(f.category.slug, 'personal')},
-							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category.slug, 'writing')},
+							"absolute -top-2 -right-2 px-3 py-1 rounded-full uppercase text-sm", 
+							{'dark:bg-lime-800 dark:border-lime-400 bg-lime-400 border-lime-800  border-1': is(f.category?.slug ?? f.data.category, 'architecture')},
+							{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(f.category?.slug ?? f.data.category, 'code')},
+							{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(f.category?.slug ?? f.data.category, 'personal')},
+							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'writing')},
+							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'ai')},
+							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'art')},
 						]}>
-							{f.category.title}
+							{f.category?.title ?? f.data.category}
 						</span>
 						<div class="col-1 row-span-full w-full h-full aspect-auto rounded-md overflow-hidden">
-							<Image src={f.image} alt={f.title ?? ""} width={600} height={400} fit="cover" quality={100} class="w-full h-full aspect-auto object-cover" />
+							<Image src={f.data.cover} alt={f.data.title ?? ""} width={600} height={400} fit="cover" quality={100} class="w-full h-full aspect-auto object-cover" />
 						</div>
 						<div class="col-1 row-span-full p-2 text-white dark:text-black bg-black/96 dark:bg-white/96 rounded-md overflow-hidden">
 							<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
-								<a href={blog_url(f.slug, f.createdAt)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{f.title}</a>
+								<a href={blog_url(f.slug, f.data.published_at)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{f.data.title}</a>
 							</h3>
 							<p class="text-md leading-6 font-inter py-2">
-								{f.snippet}
+								{f.data.snippet}
 							</p>
 							<hr>
 							<div class="flex w-full py-2 justify-between items-center-safe text-sm font-lora font-semibold">
-								<time datetime={f.createdAt.toISOString()} class="px-2">
-									{format(f.createdAt)}
+								<time datetime={f.data.published_at.toISOString()} class="px-2">
+									{format(f.data.published_at)}
 								</time>
 								<span class="px-2">
-									{f.readingTime} min read
+									{calcReadingTime(f.body)} min read
 								</span>
 							</div>
 						</div>
