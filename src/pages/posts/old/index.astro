@@ -6,19 +6,29 @@ import { MainLayout } from "@/layouts";
 import { format } from "@/utils/date";
 import { titleTemplate } from "@/utils/functions";
 import { blog_url } from "@/utils/urls";
+import { calcReadingTime } from "@lueur/blog-utils";
+import { getCollection } from "astro:content";
 
 const { searchParams, port } = new URL(Astro.request.url);
 const category = searchParams.get('category')
 
-const categories: Category[] = await getAllCategories()
-const allPosts: PostPreview[] =  await (async () => {
-	if (category) {
-		return (await getPostsByCategory(category))
-	} else {
-		return (await getAllPosts());
-	}
+// const categories: Category[] = await getAllCategories()
+// const allPosts: PostPreview[] =  await (async () => {
+// 	if (category) {
+// 		return (await getPostsByCategory(category))
+// 	} else {
+// 		return (await getAllPosts());
+// 	}
+// })()
+
+const categories = await getCollection('categories');
+const posts = await (async () => {
+	if (!category) return await getCollection('posts')
+
+	return (await getCollection('posts')).filter((post) => post.data.category === category)
 })()
 
+console.dir({ posts, categories }, { depth: Infinity })
 ---
 <MainLayout title={titleTemplate('The Library')}>
 	<main class="w-full h-full">
@@ -39,9 +49,9 @@ const allPosts: PostPreview[] =  await (async () => {
 							</h3>
 						</li>
 						{ categories && categories.map((c, i) => (
-							<li class:list={[ 'p-2', { ' bg-slate-700/40 border-b-2 border-slate-400 dark:border-slate-400': category == c.slug } ]}>
+							<li class:list={[ 'p-2', { ' bg-slate-700/40 border-b-2 border-slate-400 dark:border-slate-400': category == c.data.slug } ]}>
 								<h3 class="text-lg font-inter font-light">
-									<a href={`/posts/?category=${c.slug}`}>{c.title}</a>
+									<a href={`/posts/${c.data.slug}`}>{c.data.title}</a>
 								</h3>
 							</li>
 						)) }
@@ -56,29 +66,29 @@ const allPosts: PostPreview[] =  await (async () => {
 								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="oldest">Oldest</option>
 							</select>
 							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700 dark:text-slate-100">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+								<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
 							</svg>
 						</div>
 					</div>
 				</header>
 					{/* <hr> */}
-				<main id="article-container" class="block items-center justify-center justify-items-center content-center">
-					{allPosts && allPosts.length > 0 ? allPosts.map((p, i) => (
-						<article id={` bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.createdAt.getTime()} class="article-item block content-center justify-items-center mx-2 my-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-slate-400/80 dark:bg-slate-800 rounded-lg">
+				<main id="article-container" class="block items-center justify-center justify-items-center content-center p-2">
+					{posts && posts.length > 0 ? posts.map((p, i) => (
+						<article id={` bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.data.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 my-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 rounded-lg">
 							<div class="block p-2 h-inherit">
-								<h4 class="font-lora text-xl mb-4 hover:underline focus-visible:underline underline-offset-2">
-									<a href={blog_url(p.slug, p.createdAt)}>
-										{p.title}
+								<h4 class="font-lora text-slate-800 dark:text-slate-100 text-2xl! mb-4 -pl-1 hover:underline focus-visible:underline underline-offset-2">
+									<a href={blog_url(p.slug, p.data.published_at)}>
+										{p.data.title}
 									</a>
 								</h4>
-								<p class="text-md">{p.snippet}</p>
+								<p class="text-md pl-2 text-slate-700 dark:text-slate-100">{p.data.snippet}</p>
 							</div>
-							<div class="flex w-full my-2 py-2 justify-between items-center-safe text-sm font-lora font-semibold">
-								<time datetime={p.createdAt.toISOString()} class="px-2">
-									{format(p.createdAt)}
+							<div class="flex w-full mx-1 my-2 p-2 py-2 justify-between items-center-safe text-sm font-lora font-semibold text-slate-700 dark:text-slate-100">
+								<time datetime={p.data.published_at.toISOString()} class="px-2">
+									{format(p.data.published_at)}
 								</time>
 								<span class="px-2">
-									{p.readingTime} min read
+									{calcReadingTime(p.body)} min read
 								</span>
 							</div>
 						</article>
@@ -89,7 +99,7 @@ const allPosts: PostPreview[] =  await (async () => {
 					)}
 				</main>
 				<pre>
-					{/* {JSON.stringify(allPosts[0], null, 2)} */}
+					{/* {JSON.stringify(posts[0], null, 2)} */}
 				</pre>
 			</div>
 		</section>

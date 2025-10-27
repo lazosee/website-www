@@ -2,31 +2,48 @@
 import '@/styles/post.css';
 import { format } from '@/utils/date';
 import { blog_url } from '@/utils/urls';
+import { calcReadingTime } from '@lueur/blog-utils';
 import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import { getEntries } from 'astro:content';
-import { getEntry } from 'astro:content';
+import type { CollectionEntry, ReferenceContentEntry } from 'astro:content';
+import { getEntry, getEntries } from 'astro:content';
 
 type Props = {
     slug: CollectionEntry<"posts">['slug']
     frontmatter: CollectionEntry<"posts">['data']
     headings: MarkdownHeading[]
+    'reading-time': number
+    next: {
+        slug: string;
+        title: string;
+        year: Date;
+    } | null
+    previous: {
+        slug: string;
+        title: string;
+        year: Date;
+    } | null
 }
-const { slug, frontmatter, headings } = Astro.props;
+const { slug, frontmatter, headings, next, previous, 'reading-time': readtime } = Astro.props;
 const category = await getEntry('categories', frontmatter.category)
+const related = frontmatter.related ? (await getEntries(frontmatter.related)) : []
+const relatedPosts = related.map((r) => ({
+    slug: r.slug,
+    ...r.data,
+    body: r.body
+}));
 ---
 
-<div class="flex flex-row gap-4">
-    <aside class="hidden fixed top-0 left-0 md:relative md:block md:inset-auto w-md h-[inherit] bg-slate-800 m-3 px-2 py-4 rounded-xl">
+<div class="flex flex-row gap-4 pb-4 md:h-screen">
+    <aside class="hidden sticky top-0 left-0 md:relative md:block md:inset-auto w-1/3 md:w-1/4 max-w-sm h-full bg-slate-800 m-3 mb-6 px-2 py-4 rounded-xl text-xl">
         <div class="m-2">
             {headings && (
-                <h3 class="text-xl font-light first-letter:uppercase leading-relaxed my-4">in this article</h3>
+                <h3 class="text-2xl font-light first-letter:uppercase leading-relaxed my-4">in this article</h3>
                 <hr />
                 <ol type="I" class="flex flex-col list-[lower-roman] my-2">
                     {headings.map((h, i) => (
                         <li class=""  class:list={[
-                                "text-[1rem] my-1.5 list-item list-inside", 
+                                "text-xl my-1.5 list-item list-inside", 
                                 { 'ml-0': h.depth == 1 } ,
                                 { 'ml-2': h.depth == 2 } ,
                                 { 'ml-4': h.depth == 3 } ,
@@ -35,7 +52,7 @@ const category = await getEntry('categories', frontmatter.category)
                                 { 'ml-10': h.depth == 6 } ,
                             ]}>
                             <a href={`#${h.slug}`} class:list={[
-                                "text-[1rem] my-1.5 hover:underline focus:underline underline-offset-1"
+                                "text-xl font-[300] my-1.5 hover:underline focus:underline underline-offset-1"
                                 ]}>
                                 <span class="">{h.text}</span>
                             </a>
@@ -45,7 +62,7 @@ const category = await getEntry('categories', frontmatter.category)
             )}
         </div>
     </aside>
-    <main class="flex-1 block content-center justify-items-center items-center justify-center w-full h-full overflow-x-hidden">
+    <main class="flex-1 block content-center justify-items-center items-center justify-center w-full h-full pt-10 pb-20 overflow-x-hidden overflow-y-scroll! [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
         <header class="mx-1 my-4">
             <div class="block content-center justify-items-center m-1">
                 <div class="flex flex-wrap items-center w-full gap-0 font-light text-md text-blue-700 dark:text-blue-300 bg-slate-400/20 dark:bg-slate-800/40 rounded-md p-2 sm:px-4">
@@ -75,34 +92,42 @@ const category = await getEntry('categories', frontmatter.category)
                     <time class="">
                         {frontmatter.published_at.toLocaleDateString(undefined, {dateStyle: "medium"})}
                     </time>
-                    <span class="">{`2 min read`}</span>
+                    <span class="">{`${readtime} min read`}</span>
                 </div>
                 <div class="img self-center block w-full m-4 aspect-video rounded-xl bg-slate-500 dark:bg-slate-800 content-center justify-items-center text-center text-7xl border overflow-hidden">
-                    <Image src={frontmatter.cover} alt={frontmatter.title} quality={100} format='avif' class="inline-block w-full h-full aspect-auto object-cover object-center" />
+                    <Image src={frontmatter.cover} alt={frontmatter.title} quality={100} format='avif' class="block w-full h-full aspect-auto object-cover object-center" />
                 </div>
             </div>
         </header>
         <slot />
         <footer class="block w-full p-1">
+            {frontmatter.tags && (
+                <div class="flex flex-col gap-4 w-full m-1 my-3 py-4 items-start">
+                    <h4 id="tagged-for" class="tag uppercase text-2xl">tags</h4>
+                    <ul class="tags flex flex-wrap items-center gap-2 list-none">
+                        {frontmatter.tags.map((tag) => (
+                            <li class="tag uppercase text-[1rem] px-4 py-2 bg-slate-400/60 dark:bg-slate-700/40 rounded-md m-0.5">{tag}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             {frontmatter.related && (
                 <div class="block mx-1 my-3 px-1 py-4">
                     <h3 class="block uppercase text-3xl leading-relaxed my-6">
                         related posts
                     </h3>
                     <div class="block">
-                        {frontmatter.related.map(async (rel, i) => {
-                            const post = await getEntry('posts', rel);
-
+                        {relatedPosts.map(async (post, i) => {
                             return post ? (
-                                <article class="bg-current/20 rounded-md mx-1 my-4 pb-4 p-2">
+                                <article class="bg-current/6 rounded-md mx-1 my-4 pb-4 p-2">
                                     <h4 class="text-2xl!">
-                                        <a href={blog_url(post.slug, post.data.published_at)} class="underline decoration-1 underline-offset-2">{post?.data.title}</a>
+                                        <a href={blog_url(post.slug, post.published_at)} class="hover:underline focus:underline decoration-1 underline-offset-2">{post.title}</a>
                                     </h4>
                                     <div class="flex items-center-safe justify-between mx-2 text-md font-lora text-current/60">
-                                        <time class="text-md" datetime={post.data.published_at.toISOString()}>
-                                            {format(post.data.published_at)}
+                                        <time class="text-md" datetime={post.published_at.toISOString()}>
+                                            {format(post.published_at)}
                                         </time>
-                                        <span class="">{'3 min read'}</span>
+                                        <span class="">{`${calcReadingTime(post.body)} min read`}</span>
                                     </div>
                                 </article>
                             ) : null
@@ -110,6 +135,30 @@ const category = await getEntry('categories', frontmatter.category)
                     </div>
                 </div>
             )}
+
+            <div class="flex flex-col-reverse content-center justify-items-center gap-4 bg-current/1 rounded-md p-1 sm:p-2">
+                {previous && (
+                    <a aria-label={previous.title} title={previous.title} href={blog_url(previous.slug, previous.year)} class="previous bg-current/1 group m-1 p-2 flex flex-col w-full text-slate-900 dark:text-slate-100 items-start-safe justify-center float-left rounded-md">
+                        <span class="uppercase italic text-current/40">previous</span>
+                        <span class="group-hover:underline group-focus:underline underline-offset-2 decoration-1 w-fit">{previous.title}</span>
+                    </a>
+                )}
+                {next && (
+                    <a aria-label={next.title} title={next.title} href={blog_url(next.slug, next.year)} class="flex flex-col w-full next bg-current/1 order-1 group m-1 p-2  text-slate-900 dark:text-slate-100 items-end-safe justify-center float-end rounded-md">
+                        <span class="uppercase italic text-current/40">next</span>
+                        <span class="group-hover:underline group-focus:underline underline-offset-2 decoration-1">{next.title}</>
+                    </a>
+                )}
+            </div>
         </footer>
     </main>
 </div>
+
+<script>
+    (function() {
+        // window.scrollTo({
+        //     top: document.body.scrollHeight,
+        //     behavior: 'smooth'
+        // });
+    })()
+</script>

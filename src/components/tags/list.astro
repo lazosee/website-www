@@ -8,11 +8,11 @@ const { ordered=false , start=1, marker="●" } = Astro.props;
 ---
 
 { ordered ? (
-    <ol class="m-2 p-2 bg-slate-400/40 dark:bg-slate-800/40 list-inside list-[lower-roman] rounded">
+    <ol class="w-full my-2 p-2 bg-slate-400/40 dark:bg-slate-800/40 list-inside list-[lower-roman] rounded">
         <slot />
     </ol>
 ) : (
-    <ul class="m-2 p-2 bg-slate-400/40 dark:bg-slate-800/40 list-inside list-[square] rounded">
+    <ul class="w-full my-2 p-2 bg-slate-400/40 dark:bg-slate-800/40 list-inside list-[square] rounded">
         <slot />
     </ul>
 )}

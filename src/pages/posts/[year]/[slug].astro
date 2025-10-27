@@ -1,24 +1,58 @@
 ---
 import { MainLayout, PostLayout } from "@/layouts";
 import { titleTemplate } from "@/utils/functions";
-import { getCollection, getEntry } from "astro:content";
+import { calcReadingTime } from "@lueur/blog-utils";
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+
+export const prerender = true
+
+export const getStaticPaths = (async() => {
+    const posts = await getCollection('posts')
+    const paths = posts
+        .sort((a, b) => b.data.published_at.valueOf() - a.data.published_at.valueOf())
+        .map((post, i) => ({
+         params: { year: post.data.published_at.getUTCFullYear().toString(), slug: post.slug },
+         props: { 
+            blog: post, 
+            previous: i > 0 ? {
+                slug: posts[i-1].slug, 
+                title: posts[i-1].data.title, 
+                year: posts[i-1].data.published_at
+            } : null ,
+            next: (i < (posts.length - 1)) ? {
+                slug: posts[i+1].slug, 
+                title:  posts[i+1].data.title, 
+                year:  posts[i+1].data.published_at 
+            } : null,
+        }
+    }));
+    // 👇 Check the generated paths here!
+    console.log('Generated Paths:', paths.map(p => `/posts/${p.params.year}/${p.params.slug}`)) 
+    return paths;
+}) satisfies GetStaticPaths;
 
 const { year, slug } = Astro.params;
+console.log({ year, slug })
+if (!slug || !year) return new Response('Invalid blog slug or year', { status: 404 })
 
-if (!slug || !year) return new Response('Invalid blog slug', { status: 404 })
-// const [RES] = await db.select({ body: postsTable.body }).from(postsTable).where(eq(postsTable.slug, slug!));
-const categories = await getCollection('categories')
-const posts = await getCollection('posts')
-
-const blog = await getEntry('posts', slug)
+const { blog, next, previous } = Astro.props
 
 if (!blog) return new Response(`Blog with slug ${slug} not found!`, { status: 404 });
 
 const { Content, headings, remarkPluginFrontmatter } = await blog.render()
+const reading_time = calcReadingTime(blog.body)
 ---
 
 <MainLayout title={titleTemplate(blog.data.title)}>
-    <PostLayout slug={blog.slug} frontmatter={blog.data} {headings}>
+    <PostLayout
+        slug={blog.slug} 
+        frontmatter={blog.data} 
+        reading-time={reading_time} 
+        {headings}
+        {next}
+        {previous}
+    >
         <Content />
     </PostLayout>
 </MainLayout>

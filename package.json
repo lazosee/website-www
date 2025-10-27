@@ -16,6 +16,7 @@
     "@astrojs/netlify": "^6.6.0",
     "@astrojs/react": "^4.4.0",
     "@lueur/blog-utils": "^1.20250824.11",
+    "@netlify/neon": "^0.1.0",
     "@supabase/supabase-js": "^2.75.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/react": "^19.2.2",
@@ -29,6 +30,7 @@
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
     "drizzle-kit": "^0.31.5"
   }
 }

@@ -1,8 +1,7 @@
-import { file } from 'astro/loaders'
 import { defineCollection, reference, z } from 'astro:content'
 
 const categories = defineCollection({
-	loader: file('src\\content\\categories.json'),
+	type: 'data',
 	schema: z.object({
 		title: z.string({}),
 		slug: z.string({}),
@@ -19,7 +18,8 @@ const posts = defineCollection({
 			cover: image(),
 			published_at: z.coerce.date(),
 			updated_at: z.coerce.date(),
-			related: z.array(z.string(reference('posts'))).optional(),
+			tags: z.array(z.string()).optional(),
+			related: z.array(reference('posts')).optional(),
 			views: z.coerce.number(),
 			likes: z.coerce.number(),
 		}),

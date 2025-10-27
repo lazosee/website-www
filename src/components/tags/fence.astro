@@ -12,12 +12,12 @@ const html = codeToHtml(content, language, { shikiInstance: shiki, theme: 'dracu
 ---
 
 { content ? (
-    <figure class="block my-4 overflow-hidden rounded-xl">
+    <figure class="not-prose block my-4 gap-0 p-0 overflow-hidden rounded-xl">
         <figcaption class="flex items-center justify-between p-2 px-4 bg-current/12">
             <span>{language}</span>
             <Copy client:load {content} />
         </figcaption>
-        <div class="" set:html={html}></div>
+        <div style="font-family: 'Roboto Mono', monospace;" class="!font-mono" set:html={html}></div>
     </figure>
 ) : (
     <p></p>

@@ -1,0 +1,178 @@
+---
+import type { GetStaticPaths } from "astro";
+import { MainLayout } from "@/layouts";
+import { calcReadingTime } from "@lueur/blog-utils";
+import { getCollection } from "astro:content";
+import { blog_url, format, titleTemplate } from "@/utils";
+
+export const prerender = true;
+
+export const getStaticPaths = (async() => {
+    const posts = (await getCollection('posts'))
+        .sort((a, b) => b.data.published_at.valueOf() - a.data.published_at.valueOf());
+    const categories = await getCollection('categories');
+
+	const all = [
+		{ category: undefined }, 
+		...categories.map(
+			(c, i) => ({ category: c.data.slug })
+		)
+	].map(({ category }, i) => ({
+        category,
+        posts: category ? posts.filter(p => p.data.category === category) : posts,
+    }))
+
+    return all.map((c, _) => ({
+        params: { category: c.category },
+        props: { 
+            categories,
+            posts: c.posts.map(p => ({
+                slug: p.slug,
+                ...p.data,
+                read: calcReadingTime(p.body)
+            })) 
+        }
+    }));
+}) satisfies GetStaticPaths;
+
+const { category } = Astro.params;
+const { posts, categories } = Astro.props;
+---
+<MainLayout title={titleTemplate('The Library')}>
+	<main class="w-full h-full">
+		{/* 1. The Content Display */}
+		<section class="flex flex-col items-center justify-center w-full h-fit aspect-auto border-b-2">
+			<h2 class="block leading-relaxed w-full max-w-3xl px-2 pr-4 pt-8 sm:px-6 sm:pl-0 sm:py-12 capitalize">
+				Blog Posts
+			</h2>
+			<p class="block w-full max-w-3xl my-12 mt-4 px-2 text-2xl font-light">
+				Explore a collection of all my posts sorted by category, date, and popularity
+			</p>
+			<div id="posts" class="grid w-full place-items-center">
+				<header class="flex max-w-3xl w-full font-lora justify-between items-center content-center justify-items-center border-b-2 border-slate-400 dark:border-slate-400 p-0">
+					<ul class="hidden sm:flex max-w-3xl w-full p-0 list-none gap-2">
+						<li class:list={[ 'p-2', { ' bg-slate-700/40 border-b-2 border-slate-400 dark:border-slate-400': !category } ]}>
+							<h3 class="text-lg font-inter font-light">
+								<a href="/posts/">All</a>
+							</h3>
+						</li>
+						{ categories && categories.map((c, i) => (
+							<li class:list={[ 'p-2', { ' bg-slate-700/40 border-b-2 border-slate-400 dark:border-slate-400': category == c.data.slug } ]}>
+								<h3 class="text-lg font-inter font-light">
+									<a href={`/posts/${c.data.slug}`}>{c.data.title}</a>
+								</h3>
+							</li>
+						)) }
+					</ul>
+                    <button id="categories-toggle" popovertarget="categories" class="sm:hidden m-2 border-current/50 text-current/80 font-roboto bg-current/30 border-2 p-2 rounded-md">
+                        Categories
+                    </button>
+                    <span class="m-2 p-2 font-oswald border-1 rounded-md capitalize">{(categories.find((c) => c.data.slug == category))?.data.title ?? 'All'}</span>
+					<ul popover id="categories" class='category-items border-2 border-current sm:hidden w-fit min-w-60 m-2 rounded-md'>
+                        <div class="flex justify-between uppercase items-center border-b-2 h-12">
+                            <span class="text-xl font-open-oswald p-2 m-1">categories</span>
+                            <button popovertarget="categories" popovertargetaction="hide" class=" m-2 p-2">
+                                <span aria-hidden="true">❌</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                        </div>
+                        <div class="m-2">
+                            <li class:list={[ 'category-item block p-2', { 'bg-slate-400/80  dark:bg-slate-700/80 border-none rounded-md border-slate-400 dark:border-slate-400': !category } ]}>
+                                <h3 class="block text-lg font-inter font-light">
+                                    <a class="block" href="/posts/">All</a>
+                                </h3>
+                            </li>
+                            { categories && categories.map((c, i) => (
+                                <li class:list={[ 'block p-2', { 'bg-slate-400/80  dark:bg-slate-700/80 border-none rounded-md border-slate-400 dark:border-slate-400': category == c.data.slug } ]}>
+                                    <h3 class="block text-lg font-inter font-light">
+                                        <a class="block" href={`/posts/${c.data.slug}`}>{c.data.title}</a>
+                                    </h3>
+                                </li>
+                            )) }
+                        </div>
+					</ul>
+					<!-- <div class="w-auto max-w-sm min-w-[200px]">				
+						<div class="relative">
+							<select
+								name="sort-by" id="sort-by"
+								class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:text-white text-lg border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="latest">Latest</option>
+								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="popular">Popular</option>
+								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="oldest">Oldest</option>
+							</select>
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700 dark:text-slate-100">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+							</svg>
+						</div>
+					</div> -->
+				</header>
+					{/* <hr> */}
+				<main id="article-container" class="block items-center justify-center justify-items-center content-center p-2">
+					{posts && posts.length > 0 ? posts.map((p, i) => (
+						<article id={` bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 mb-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 rounded-lg">
+							<div class="block h-fit border-1 md:border-none">
+								<h4 class="font-lora leading-relaxed text-slate-800 dark:text-slate-100 text-2xl! my-4! p-2 hover:underline focus-visible:underline underline-offset-2">
+									<a class="block" href={blog_url(p.slug, p.published_at)}>
+										{p.title}
+									</a>
+								</h4>
+                                <hr class="my-4 md:text-current/20" />
+								<p class="text-md p-2 pl-4 text-slate-700 dark:text-slate-100">
+                                    {p.snippet}
+                                </p>
+							</div>
+							<div class="flex w-full mx-1 my-2 p-2 py-2 justify-between items-center-safe text-[1rem] font-lora font-semibold text-slate-700 dark:text-slate-100 border-1 md:border-none">
+								<time datetime={p.published_at.toISOString()} class="px-2">
+									{format(p.published_at)}
+								</time>
+								<span class="px-2">
+									{p.read} min read
+								</span>
+							</div>
+						</article>
+					)) : (
+						<p class="m-4 p-4 shadow-2xl text-xl font-extralight">
+							No posts for category: <em class="text-2xl">{category}</em>
+						</p>
+					)}
+				</main>
+				<pre>
+					{/* {JSON.stringify(posts[0], null, 2)} */}
+				</pre>
+			</div>
+		</section>
+	</main>
+</MainLayout>
+
+<script>
+	import { sortAndReplaceElements, type SortBy } from "@/utils/dom";
+	
+	const sort_by = document.querySelector('#sort-by') as HTMLSelectElement;
+	
+	window.onload = function() {
+		sortAndReplaceElements('article-container', '.article-item', 'latest')
+	}
+	
+	sort_by.addEventListener('change', function () {
+		sortAndReplaceElements('article-container', '.article-item', this.value as SortBy)
+	})
+</script>
+
+<style>
+    @reference "../../styles/global.css";
+
+    #categories-toggle {
+        anchor-name: --cats;
+    }
+    .category-items {
+        position: absolute;
+        position-anchor: --cats;
+        top: anchor(bottom);
+        left: anchor(left);
+        /* translate: 5% 0; */
+        background: rgb(192, 192, 192 /50%);
+    }
+    .category-items::backdrop {
+        background: rgb(192, 192, 192 /50%);
+    }
+</style>

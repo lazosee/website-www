@@ -35,7 +35,7 @@ article {
 }
 
 pre.shiki {
-	@apply overflow-x-auto p-4 scroll-smooth;
+	@apply overflow-x-auto p-4 scroll-smooth font-mono!;
 	scrollbar-width: 2;
 	scrollbar-gutter: auto;
 	scrollbar-color: var(--color-slate-600) transparent;
