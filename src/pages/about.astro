@@ -1,0 +1,11 @@
+---
+import { about } from "@/data/me";
+import { capitalize, titleTemplate, uppercase } from "@/utils";
+import { MainLayout } from "../layouts";
+
+export const prerender = true;
+---
+
+<MainLayout title={titleTemplate(capitalize(about.name), about.description)}>
+    <h1 class="text-yellow-500! text-shadow-yellow-800">{uppercase("Yellow World")}</h1>
+</MainLayout>

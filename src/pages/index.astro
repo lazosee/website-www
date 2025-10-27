@@ -5,6 +5,7 @@ import { Image } from "astro:assets";
 
 import { HeroImg } from '@/assets';
 
+import { about } from "@/data/me";
 import { format } from "@/utils/date";
 import { blog_url } from "@/utils/urls";
 import { calcReadingTime } from "@lueur/blog-utils";
@@ -82,53 +83,6 @@ const posts = (await getCollection('posts'))
 			</div>
 		</section>
 
-		{/* 2. Curator's Pick */}
-		<!-- <section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto border-b-2">
-			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
-			<div class="relative flex flex-col w-full items-center justify-center mt-6">
-				<ul class="curator-carousel relative gap-4 w-full p-4 grid grid-flow-col overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth scroll-ps-4 snap-x snap-mandatory transition-all duration-1000 ease-in-out">
-					{featuredPosts && featuredPosts.map((post) => (
-						<li class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
-							<article class="contents">
-								<span class:list={[
-									"absolute -top-2 -right-2 px-3 py-1 rounded-full", 
-									{'dark:bg-lime-800 dark:border-lime-400 bg-lime-400 border-lime-800  border-1': is(post.category.slug, 'architecture')},
-									{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(post.category.slug, 'code')},
-									{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(post.category.slug, 'personal')},
-									{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(post.category.slug, 'writing')},
-								]}>
-									{post.category.title}
-								</span>
-								<div class="col-1 row-span-full w-full h-full aspect-auto rounded-md overflow-hidden">
-									<Image src={post.image} alt={post.title ?? ""} width={600} height={400} fit="cover" quality={100} class="w-full h-full aspect-auto object-cover" />
-								</div>
-								<div class="col-1 row-span-full p-2 text-white dark:text-black bg-black/96 dark:bg-white/96 rounded-md overflow-hidden">
-									<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
-										<a href={blog_url(post.slug, post.createdAt)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{post.title}</a>
-									</h3>
-									<p class="text-md leading-6 font-inter py-2">
-										{post.snippet}
-									</p>
-									<hr>
-									<div class="flex w-full py-2 justify-between items-center-safe text-sm font-lora font-semibold">
-										<time datetime={post.createdAt.toISOString()} class="px-2">
-											{format(post.createdAt)}
-										</time>
-										<span class="px-2">
-											{post.readingTime} min read
-										</span>
-									</div>
-								</div>
-							</article>
-						</li>
-					))}
-				</ul>
-			</div>
-		</section> -->
-
-		{/* 5. Short About Me */}
-		<section class=""></section>
-
 		{/* 2. Curator's Pick(2.0) (FLEX) */}
 		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto bg-white dark:bg-slate-900">
 			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
@@ -141,8 +95,8 @@ const posts = (await getCollection('posts'))
 							{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(f.category?.slug ?? f.data.category, 'code')},
 							{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(f.category?.slug ?? f.data.category, 'personal')},
 							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'writing')},
-							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'ai')},
-							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'art')},
+							{'dark:bg-purple-800 dark:border-purple-400  border-purple-800 bg-purple-400  border-1': is(f.category?.slug ?? f.data.category, 'ai')},
+							{'dark:bg-cyan-800 dark:border-cyan-400  border-cyan-800 bg-cyan-400  border-1': is(f.category?.slug ?? f.data.category, 'art')},
 						]}>
 							{f.category?.title ?? f.data.category}
 						</span>
@@ -153,10 +107,10 @@ const posts = (await getCollection('posts'))
 							<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
 								<a href={blog_url(f.slug, f.data.published_at)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{f.data.title}</a>
 							</h3>
-							<p class="text-md leading-6 font-inter py-2">
+							{/* <p class="text-md leading-6 font-inter py-2">
 								{f.data.snippet}
-							</p>
-							<hr>
+							</p> */}
+							<hr class="my-4 text-current/20">
 							<div class="flex w-full py-2 justify-between items-center-safe text-sm font-lora font-semibold">
 								<time datetime={f.data.published_at.toISOString()} class="px-2">
 									{format(f.data.published_at)}
@@ -168,13 +122,52 @@ const posts = (await getCollection('posts'))
 						</div>
 					</article>
 				))}
-				<div class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
+				<div class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-40 max-h-140 w-full h-fit m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
 					<a href="/posts" class="place-self-center flex items-center justify-center uppercase border-2 rounded-full px-8 py-4 border-none bg-black dark:bg-white text-white dark:text-black hover:bg-slate-900 focus-visible:bg-slate-900 hover:dark:bg-slate-400 focus-visible:dark:bg-slate-400">view all posts</a>
 				</div>
 			</div>
 		</section>
 
-		{/* 4. GAllery Preview */}
+		{/* 5. Short About Me */}
+		<div class="bg-white dark:bg-black py-12">
+			<section class="relative block content-center-safe m-2 my-12 sm:px-6">
+				<h2 class="relative block lg:max-w-2xl leading-relaxed mb-6 uppercase font-oswald after:absolute after:left-0 after:bottom-0 after:w-full after:h-2 after:bg-red-800 after:dark:bg-red-600">about me</h2>
+				
+				<div class="relative flex w-fit h-inherit m-4 content-center-safe transform translate-y-12lg:float-end lg:absolute lg:right-0 lg:-top-[50%] lg:translate-y-[50%] ">
+					<Image src={about.image} alt="profile" width={400} height={400} quality={100} format="avif" loading="lazy" class="w-40 lg:w-80 h-auto aspect-square rounded-full lg:rounded-sm object-center object-cover border-4 border-current/20" />
+				</div>
+				<div class="block content-center-safe transform translate-y-6 lg:max-w-2xl w-full">
+					<div class="mt-6 **:border-red-800/80 **:dark:border-red-600/80">
+						<div class="relative flex my-4">
+							<span class="absolute rounded-bl-2xl -top-[40%] left-0 border-l-3 border-b-3 w-8 h-full"></span>
+							<p class="ml-10">
+								<span class="uppercase font-semibold underline decoration-2 underline-offset-2 decoration-current/40 pb-2 text-slate-700/80 dark:text-slate-300/60"> my name: </span>
+								<br />
+								<span class="text-slate-800 dark:text-slate-200 uppercase text-xl font-semibold prose prose-xl">{about.name}</span>
+							</p>
+						</div>
+						<div class="relative flex my-4">
+							<span class="absolute rounded-bl-2xl -top-[80%] left-0 border-l-3 border-b-3 w-8 h-full"></span>
+							<p class="ml-10 text-balance first-letter:capitalize!">
+								<span class="uppercase font-semibold underline decoration-2 underline-offset-2 decoration-current/40 pb-2 text-slate-700/80 dark:text-slate-300/60">about me: </span>
+								<br />
+								<span class="prose prose-xl prose-neutral text-black text-xl dark:text-white dark:prose-invert" set:html={about.desc}></span>
+							</p>
+						</div>
+						<div class="relative flex my-4">
+							<span class="absolute rounded-bl-2xl -top-[10rem] left-0 border-l-3 border-b-3 w-8 h-[12rem]"></span>
+							<p class="ml-10 mt-4 text-balance first-letter:capitalize!">
+								<a href="/about" class="uppercase my-2 py-4 px-6 text-white dark:text-black bg-black dark:bg-white rounded-md">
+									learn more about me
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		{/* 4. Gallery Preview */}
 		<section class=""></section>
 
 		{/* 6. contact CTA */}

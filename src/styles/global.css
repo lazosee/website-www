@@ -38,6 +38,9 @@
 	h3 {
 		@apply text-4xl leading-normal;
 	}
+	img {
+		@apply italic object-cover object-center w-full h-auto text-center content-center justify-items-center;
+	}
 }
 
 @layer components {
