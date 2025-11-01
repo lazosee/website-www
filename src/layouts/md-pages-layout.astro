@@ -1,14 +1,16 @@
 ---
 import "@/styles/global.css";
-import type { Meta, Title } from "@/types/head";
+import type { Meta } from "@/types/head";
 import { MainFooter, MainHeader } from "../components";
 
 type Props = {
-    title: Title;
-    metas?: Meta[]
+    frontmatter: {
+        title: string;
+        metas?: Meta[]
+    }
 }
 
-const { title, metas } = Astro.props;
+const { frontmatter: { title, metas } } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,7 +21,7 @@ const { title, metas } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>
-            {typeof title == "string" ? title : title()}
+            {title}
         </title>
         {metas && metas.map((meta) => (
             <meta name={meta.name} content={meta.content} />
@@ -27,7 +29,9 @@ const { title, metas } = Astro.props;
 	</head>
 	<body class="w-full h-full min-h-screen p-0 m-0 border-2 text-lg font-roboto text-black dark:text-white bg-slate-300 dark:bg-slate-950 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
         <MainHeader />
-		<slot />
+		<div class="prose prose-lg dark:prose-invert m-2">
+            <slot />
+        </div>
 		<MainFooter />
 	</body>
 </html>

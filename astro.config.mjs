@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 import react from '@astrojs/react'
 
+import mdx from '@astrojs/mdx'
+
 // https://astro.build/config
 export default defineConfig({
 	output: 'server',
@@ -16,7 +18,7 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
-	integrations: [markdoc(), react()],
+	integrations: [markdoc({}), react(), mdx({ optimize: true })],
 	image: {
 		remotePatterns: [{ protocol: 'https', hostname: 'picsum.photos' }],
 	},

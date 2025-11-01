@@ -1,13 +1,12 @@
 ---
-import { about } from "@/data/me";
+import { MainLayout } from "@/layouts";
 import type { Meta } from "@/types/head";
-import { capitalize, titleTemplate, uppercase } from "@/utils";
-import { MainLayout } from "../layouts";
+import { titleTemplate, uppercase } from "@/utils";
 
 export const prerender = true;
 
 // metadata
-const title = titleTemplate(capitalize(about.name), about.description)
+const title = titleTemplate("Gallery")
 /* TODO: Edit the following metadata */
 const description = ""
 const cover = ""

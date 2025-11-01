@@ -6,6 +6,8 @@ import { Image } from "astro:assets";
 import { HeroImg } from '@/assets';
 
 import { about } from "@/data/me";
+import { TITLE } from "@/data/nav";
+import type { Meta } from "@/types/head";
 import { format } from "@/utils/date";
 import { blog_url } from "@/utils/urls";
 import { calcReadingTime } from "@lueur/blog-utils";
@@ -23,17 +25,32 @@ const posts = (await getCollection('posts'))
 		body: post.body,
 		category: categories.find((c) => c.data.slug == post.slug)?.data
 	}));
-//
+
+// Metadata
+const title = titleTemplate(TITLE, "Architecture, Code & Creative Works by Lazaro Osee", "-")
+const metas: Meta[] = [
+		{ name: "title", content: `${TITLE} | Architecture, Code & Creative Works by Lazaro Osee` },
+		{ name: "description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
+		{ name: "canonical", content: "https://www.lazaroosee.xyz/" },
+		{ name: "type", content: "website" },
+		{ name: "author", content: "Lazaro Osee" },
+		{ name: "copyright", content: "Lazaro Osee" },
+		{ name: "image", content: "https://github.com/oseelabs.png" },
+		{ name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+		{ name: "og:title", content: `${TITLE} | Architecture, Code & Creative Works by Lazaro Osee` },
+		{ name: "og:description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
+		{ name: "og:image", content: "https://github.com/oseelabs.png" },
+		{ name: "og:url", content: "https://www.lazaroosee.xyz" },
+		{ name: "twitter:card", content: "summary_large_image" },
+		{ name: "twitter:title", content: `${TITLE} | Architecture, Code & Creative Works by Lazaro Osee` },
+		{ name: "twitter:decsription", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
+		{ name: "twitter:image", content: "https://github.com/oseelabs.png" },
+	]
 ---
 
 <MainLayout
-	title={titleTemplate()}
-	metas={[
-		{ name: "title", content: "The Osee Archives: Architecture, Code & Creative Works by Lazaro Osee" },
-		{ name: "description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
-		{ name: "canonical", content: "https://blog.lazaroosee.xyz/" },
-		{ name: "robots", content: "index, follow" }
-	]}
+	{title}
+	{metas}
 >
 	<main class="w-full h-full">
 		<!-- TODO: keep the orignal hero commented for reference -->

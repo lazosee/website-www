@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@astrojs/markdoc": "^0.15.8",
+    "@astrojs/mdx": "^4.3.9",
     "@astrojs/netlify": "^6.6.0",
     "@astrojs/react": "^4.4.0",
     "@lueur/blog-utils": "^1.20250824.11",
@@ -30,6 +31,7 @@
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.19",
     "drizzle-kit": "^0.31.5"
   }

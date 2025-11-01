@@ -1,8 +1,10 @@
 ---
 import { MainLayout, PostLayout } from "@/layouts";
+import type { Meta } from "@/types/head";
 import { titleTemplate } from "@/utils/functions";
 import { calcReadingTime } from "@lueur/blog-utils";
 import type { GetStaticPaths } from "astro";
+import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 
 export const prerender = true
@@ -33,7 +35,6 @@ export const getStaticPaths = (async() => {
 }) satisfies GetStaticPaths;
 
 const { year, slug } = Astro.params;
-console.log({ year, slug })
 if (!slug || !year) return new Response('Invalid blog slug or year', { status: 404 })
 
 const { blog, next, previous } = Astro.props
@@ -42,9 +43,34 @@ if (!blog) return new Response(`Blog with slug ${slug} not found!`, { status: 40
 
 const { Content, headings, remarkPluginFrontmatter } = await blog.render()
 const reading_time = calcReadingTime(blog.body)
+
+// Metadata
+const title = titleTemplate(blog.data.title)
+const { src: cover } = await getImage({ src: blog.data.cover, format: "avif", fit: "cover", inferSize: true, quality: 100 })
+const metas: Meta[] = [
+		{ name: "title", content: blog.data.title },
+		{ name: "description", content: blog.data.snippet },
+		{ name: "canonical", content: "https://www.lazaroosee.xyz/" },
+		{ name: "type", content: "article" },
+		{ name: "author", content: "Lazaro Osee" },
+		{ name: "copyright", content: "Lazaro Osee" },
+		{ name: "robots", content: "index, follow" },
+		{ name: "image", content: cover },
+		{ name: "og:title", content: blog.data.title },
+		{ name: "og:description", content: blog.data.snippet },
+		{ name: "og:image", content: cover },
+		{ name: "og:url", content: "https://www.lazaroosee.xyz" },
+		{ name: "twitter:card", content: "summary_large_image" },
+		{ name: "twitter:title", content: blog.data.title },
+		{ name: "twitter:decsription", content: blog.data.snippet },
+		{ name: "twitter:image", content: cover },
+	]
 ---
 
-<MainLayout title={titleTemplate(blog.data.title)}>
+<MainLayout
+	title={title}
+	{metas}
+>
     <PostLayout
         slug={blog.slug} 
         frontmatter={blog.data} 
