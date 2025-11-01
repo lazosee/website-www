@@ -1,7 +1,7 @@
 ---
 import { MainLayout } from "@/layouts";
 import type { Meta } from "@/types/head";
-import { titleTemplate, uppercase } from "@/utils";
+import { titleTemplate } from "@/utils";
 
 export const prerender = true;
 
@@ -31,5 +31,7 @@ const metas: Meta[] = [
 ---
 
 <MainLayout {title} {metas}>
-    <h1 class="text-yellow-500! text-shadow-yellow-800">{uppercase("Yellow World")}</h1>
+    <h1 class="text-yellow-500! text-shadow-yellow-800">
+		Page under active development
+	</h1>
 </MainLayout>
