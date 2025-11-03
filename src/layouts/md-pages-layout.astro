@@ -27,9 +27,9 @@ const { frontmatter: { title, metas } } = Astro.props;
             <meta name={meta.name} content={meta.content} />
         ))}
 	</head>
-	<body class="w-full h-full min-h-screen p-0 m-0 border-2 text-lg font-roboto text-black dark:text-white bg-slate-300 dark:bg-slate-950 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
+	<body class="antialiased block w-full h-full min-h-screen p-0 m-0 text-lg font-roboto text-black dark:text-white bg-slate-300 dark:bg-slate-900 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-current/10 [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
         <MainHeader />
-		<div class="prose prose-lg dark:prose-invert m-2">
+		<div class="block justify-self-center prose prose-lg md:prose-xl dark:prose-invert m-2 py-12">
             <slot />
         </div>
 		<MainFooter />

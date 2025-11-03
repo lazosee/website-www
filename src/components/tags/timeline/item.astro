@@ -1,0 +1,22 @@
+---
+export type TimePeriod = string | number;
+
+export type Props = {
+    period?: TimePeriod
+    event: string
+    description: string
+}
+
+const { period = 'present', event, description } = Astro.props;
+---
+
+<div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <span class="text-sm font-semibold text-sky-600 dark:text-sky-500 uppercase">
+        {period}
+    </span>
+    <h4 class="text-xl font-bold font-lora tracking-wide text-slate-800 dark:text-sky-100 mt-1">
+        {event}
+    </h4>
+    <p set:html={description} class="text-slate-600 dark:text-white mt-1"></p>
+</div>

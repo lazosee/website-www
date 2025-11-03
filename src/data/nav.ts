@@ -34,7 +34,7 @@ export const social_links: (Link & { icon: string })[] = [
 ] as const
 
 export const footer_links: Link[] = [
-	{ href: '/privacy', label: 'Privacy Policy' },
+	{ href: '/privacy-policy', label: 'Privacy Policy' },
 	{ href: '/sitemap', label: 'Sitemap' },
 	{ href: '/rss.xml', label: 'RSS' },
 ] as const

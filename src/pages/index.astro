@@ -1,205 +1,240 @@
 ---
-import { MainLayout } from "@/layouts";
-import { is, titleTemplate } from "@/utils/functions";
-import { Image } from "astro:assets";
-
-import { HeroImg } from '@/assets';
-
+import { Timeline, TimelineItem } from "@/components/tags";
 import { about } from "@/data/me";
-import { TITLE } from "@/data/nav";
 import type { Meta } from "@/types/head";
-import { format } from "@/utils/date";
-import { blog_url } from "@/utils/urls";
-import { calcReadingTime } from "@lueur/blog-utils";
-import { getCollection } from "astro:content";
+import { capitalize, titleTemplate } from "@/utils";
+import { MainLayout } from "../layouts";
 
 export const prerender = true;
 
-const categories = await getCollection('categories')
-const posts = (await getCollection('posts'))
-	.sort((a, b) => b.data.published_at.valueOf() - a.data.published_at.valueOf())
-	.slice(0, 5)
-	.map((post) => ({
-		slug: post.slug,
-		data: post.data,
-		body: post.body,
-		category: categories.find((c) => c.data.slug == post.slug)?.data
-	}));
-
-// Metadata
-const title = titleTemplate(TITLE, "Architecture, Code & Creative Works by Lazaro Osee", "-")
+// metadata
+const title = titleTemplate(capitalize(about.name), about.description)
+/* TODO: Edit the following metadata */
+const description = ""
+const cover = ""
 const metas: Meta[] = [
-		{ name: "title", content: `${TITLE} | Architecture, Code & Creative Works by Lazaro Osee` },
-		{ name: "description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
+		{ name: "title", content: title },
+		{ name: "description", content: description },
 		{ name: "canonical", content: "https://www.lazaroosee.xyz/" },
 		{ name: "type", content: "website" },
 		{ name: "author", content: "Lazaro Osee" },
 		{ name: "copyright", content: "Lazaro Osee" },
-		{ name: "image", content: "https://github.com/oseelabs.png" },
-		{ name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
-		{ name: "og:title", content: `${TITLE} | Architecture, Code & Creative Works by Lazaro Osee` },
-		{ name: "og:description", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
-		{ name: "og:image", content: "https://github.com/oseelabs.png" },
+		{ name: "robots", content: "index, follow" },
+		{ name: "image", content: cover },
+		{ name: "og:title", content: title },
+		{ name: "og:description", content: description },
+		{ name: "og:image", content: cover },
 		{ name: "og:url", content: "https://www.lazaroosee.xyz" },
 		{ name: "twitter:card", content: "summary_large_image" },
-		{ name: "twitter:title", content: `${TITLE} | Architecture, Code & Creative Works by Lazaro Osee` },
-		{ name: "twitter:decsription", content: "The official archive of Lazaro Osee, TUK architecture student and self-taught software developer. Explore projects in design, code, poetry, and modelling." },
-		{ name: "twitter:image", content: "https://github.com/oseelabs.png" },
+		{ name: "twitter:title", content: title },
+		{ name: "twitter:decsription", content: description },
+		{ name: "twitter:image", content: cover },
 	]
 ---
 
-<MainLayout
-	{title}
-	{metas}
->
-	<main class="w-full h-full">
-		<!-- TODO: keep the orignal hero commented for reference -->
-		{/* 1. Original hero */}
-		{/* <section class="flex flex-row w-full h-auto aspect-auto border-b-2">
-			<div class="hidden md:block flex-1 w-full h-[inherit] p-auto bg-red-400 border-r-2">
-				<Image src={HeroImg} width={800} height={500} format="webp" quality={100} alt="arhcitecture and code" class="w-full h-full object-cover" />
-			</div>
-			<div class="flex-1 w-full h-full">
-				<h1 class="block leading-tight px-4 py-8 text-balance font-playfair font-bold border-b-2">
-					Bridging structure and Syntax
-				</h1>
-				<p class="leading-tight px-4 py-8 border-b-2">
-					Design, Code, and the archive of Creation
-				</p>
-				<div class="block h-full px-4">
-					<div class="flex w-fit py-8 border-l-2 border-r-2">
-						<button class="flex h-fit items-center justify-center border-t-2 border-b-2 font-oswald font-semibold uppercase text-white px-4 py-8 bg-slate-800 hover:bg-slate-900 focus-visible:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 cursor-pointer leading-tight">
-							explore the latest posts
-						</button>
-					</div>
-				</div>
-			</div>
-		</section> */}
-		{/* 1. "Golden Ratio" Hero */}
-		<section class="flex flex-row w-full h-auto aspect-auto border-b-2">
-			<div class="hidden md:block flex-1 w-full h-[inherit] p-auto border-r-2">
-				<Image src={HeroImg} width={800} height={500} format="webp" quality={100} loading={"eager"} alt="arhcitecture and code" class="w-full h-full object-cover" />
-			</div>
-			<div class="flex-1 aspect-auto w-full h-inherit grid grid-rows-2 grid-cols-1">
-				<h1 class="block row-span-1 leading-tight px-5 py-10 sm:px-8 sm:py-16 text-balance font-playfair font-bold border-b-2">
-					Bridging structure and Syntax
-				</h1>
-				<div class="row-span-1 grid grid-cols-2 grid-rows-1">
-					<p class="flex flex-col leading-tight text-2xl text-balance text-center font-semibold font-roboto justify-center p-2 order-2 border-l-2">
-						Design, Code, and the archive of Creation
-					</p>
-					<div class="h-full grid grid-rows-2 grid-cols-1 place-content-center place-items-center justify-center items-center">
-						<div class="border-b-2 w-full h-full"></div>
-						<div class="grid grid-cols-1 grid-rows-1 w-full h-full place-content-center place-items-center justify-center items-center">
-							<button class="flex h-fit items-center justify-center border-2 font-oswald font-semibold uppercase text-white m-2 px-4 py-3 rounded-md bg-slate-800 hover:bg-slate-900 focus-visible:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 cursor-pointer leading-tight">
-								explore the latest posts
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+<MainLayout {title} {metas}>
+    <main class="overflow-x-hidden">
+		{/*  1. Hero section */}
+		<section class="bg-white dark:bg-slate-950 py-16 md:py-24">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <!-- Right Side (Text) - Placed first for mobile stacking -->
+                    <div class="text-center md:text-left">
+                        <span class="text-sky-600 dark:text-sky-500 font-semibold uppercase tracking-wide">About Me</span>
+                        <h1 class="mt-2 text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">Hi, I'm Lazaro Osee.</h1>
+                        <p class="mt-6 text-xl text-slate-600 dark:text-white">
+                            I am an architectural designer, software developer, and creative writer.
+                        </p>
+                        <p class="mt-4 text-lg text-slate-600 dark:text-white">
+                            I build bridges between the digital and physical worlds, using code to solve spatial problems and art to tell human stories.
+                        </p>
+                        <!-- CTA Buttons -->
+                        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                            <a href="/gallery" class="inline-block px-8 py-3 rounded-lg bg-sky-600 text-white font-medium text-center shadow-lg hover:bg-sky-700 transition duration-300 transform hover:-translate-y-0.5">
+                                View My Work
+                            </a>
+                            <a href="/contact" class="inline-block px-8 py-3 rounded-lg bg-slate-100 text-slate-800 font-medium text-center shadow-lg hover:bg-slate-200 transition duration-300 transform hover:-translate-y-0.5">
+                                Get in Touch
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Left Side (Visual) -->
+                    <div class="flex justify-center">
+                        <img src="https://placehold.co/600x600/e0f2fe/0ea5e9?text=Lazaro+Osee" 
+                             alt="A professional portrait of Lazaro Osee"
+                             class="rounded-full w-80 h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] object-cover shadow-2xl border-8 border-white">
+                    </div>
+                </div>
+            </div>
+        </section>
 
-		{/* 2. Curator's Pick(2.0) (FLEX) */}
-		<section class="flex flex-col items-center justify-center w-full h-auto py-8 aspect-auto bg-white dark:bg-slate-900">
-			<h2 class="px-4 pt-8 sm:px-6 sm:py-12 capitalize">Featured Posts</h2>
-			<div class="relative flex flex-wrap w-full items-center justify-center mt-6">
-				{posts && posts.map((f, i) => (
-					<article class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-100 max-h-140 w-full h-full m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
-						<span class:list={[
-							"absolute -top-2 -right-2 px-3 py-1 rounded-full uppercase text-sm", 
-							{'dark:bg-lime-800 dark:border-lime-400 bg-lime-400 border-lime-800  border-1': is(f.category?.slug ?? f.data.category, 'architecture')},
-							{'dark:bg-indigo-800 dark:border-indigo-400  bg-indigo-400 border-indigo-800  border-1': is(f.category?.slug ?? f.data.category, 'code')},
-							{'dark:bg-fuchsia-800 dark:border-fuchsia-400  border-fuchsia-800 bg-fuchsia-400  border-1': is(f.category?.slug ?? f.data.category, 'personal')},
-							{'dark:bg-rose-800 dark:border-rose-400  border-rose-800 bg-rose-400  border-1': is(f.category?.slug ?? f.data.category, 'writing')},
-							{'dark:bg-purple-800 dark:border-purple-400  border-purple-800 bg-purple-400  border-1': is(f.category?.slug ?? f.data.category, 'ai')},
-							{'dark:bg-cyan-800 dark:border-cyan-400  border-cyan-800 bg-cyan-400  border-1': is(f.category?.slug ?? f.data.category, 'art')},
-						]}>
-							{f.category?.title ?? f.data.category}
-						</span>
-						<div class="col-1 row-span-full w-full h-full aspect-auto rounded-md overflow-hidden">
-							<Image src={f.data.cover} alt={f.data.title ?? ""} width={600} height={400} fit="cover" quality={100} class="w-full h-full aspect-auto object-cover" />
-						</div>
-						<div class="col-1 row-span-full p-2 text-white dark:text-black bg-black/96 dark:bg-white/96 rounded-md overflow-hidden">
-							<h3 class="text-lg font-lora font-semibold pb-4 cursor-pointer">
-								<a href={blog_url(f.slug, f.data.published_at)} class="hover:underline focus-visible:underline underline-offset-2 decoration-2">{f.data.title}</a>
-							</h3>
-							{/* <p class="text-md leading-6 font-inter py-2">
-								{f.data.snippet}
-							</p> */}
-							<hr class="my-4 text-current/20">
-							<div class="flex w-full py-2 justify-between items-center-safe text-sm font-lora font-semibold">
-								<time datetime={f.data.published_at.toISOString()} class="px-2">
-									{format(f.data.published_at)}
-								</time>
-								<span class="px-2">
-									{calcReadingTime(f.body)} min read
-								</span>
-							</div>
-						</div>
-					</article>
-				))}
-				<div class="relative grid grid-cols-1 place-content-end-safe place-items-end-safe grid-rows-1 list-none max-w-90 min-w-80 min-h-40 max-h-140 w-full h-fit m-4 flex-grow basis-full snap-center bg-transparent  shadow shadow-gray-800/50 dark:shadow-gray-500/50 rounded-md">
-					<a href="/posts" class="place-self-center flex items-center justify-center uppercase border-2 rounded-full px-8 py-4 border-none bg-black dark:bg-white text-white dark:text-black hover:bg-slate-900 focus-visible:bg-slate-900 hover:dark:bg-slate-400 focus-visible:dark:bg-slate-400">view all posts</a>
-				</div>
-			</div>
-		</section>
+        <!-- 2. Philosophy / Mission Section -->
+        <section class="dark py-16 md:py-24 bg-sky-50 dark:bg-sky-950">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">My Philosophy</h2>
+                <p class="mt-6 text-xl md:text-2xl text-slate-700 dark:text-white leading-relaxed">
+                    "I believe architecture teaches us <strong class="text-sky-700 dark:text-sky-200">structure</strong>, technology gives us <strong class="text-sky-700 dark:text-sky-200">scale</strong>, and art provides the <strong class="text-sky-700 dark:text-sky-200">soul</strong>. My work lives at the intersection of these three disciplines, driven to create solutions that are not only functional and efficient but also beautiful and human-centric."
+                </p>
+            </div>
+        </section>
 
-		{/* 5. Short About Me */}
-		<div class="bg-white dark:bg-black py-12">
-			<section class="relative block content-center-safe m-2 my-12 sm:px-6">
-				<h2 class="relative block lg:max-w-2xl leading-relaxed mb-6 uppercase font-oswald after:absolute after:left-0 after:bottom-0 after:w-full after:h-2 after:bg-red-800 after:dark:bg-red-600">about me</h2>
-				
-				<div class="relative flex w-fit h-inherit m-4 content-center-safe transform translate-y-12lg:float-end lg:absolute lg:right-0 lg:-top-[50%] lg:translate-y-[50%] ">
-					<Image src={about.image} alt="profile" width={400} height={400} quality={100} format="avif" loading="lazy" class="w-40 lg:w-80 h-auto aspect-square rounded-full lg:rounded-sm object-center object-cover border-4 border-current/20" />
-				</div>
-				<div class="block content-center-safe transform translate-y-6 lg:max-w-2xl w-full">
-					<div class="mt-6 **:border-red-800/80 **:dark:border-red-600/80">
-						<div class="relative flex my-4">
-							<span class="absolute rounded-bl-2xl -top-[40%] left-0 border-l-3 border-b-3 w-8 h-full"></span>
-							<p class="ml-10">
-								<span class="uppercase font-semibold underline decoration-2 underline-offset-2 decoration-current/40 pb-2 text-slate-700/80 dark:text-slate-300/60"> my name: </span>
-								<br />
-								<span class="text-slate-800 dark:text-slate-200 uppercase text-xl font-semibold prose prose-xl">{about.name}</span>
-							</p>
-						</div>
-						<div class="relative flex my-4">
-							<span class="absolute rounded-bl-2xl -top-[80%] left-0 border-l-3 border-b-3 w-8 h-full"></span>
-							<p class="ml-10 text-balance first-letter:capitalize!">
-								<span class="uppercase font-semibold underline decoration-2 underline-offset-2 decoration-current/40 pb-2 text-slate-700/80 dark:text-slate-300/60">about me: </span>
-								<br />
-								<span class="prose prose-xl prose-neutral text-black text-xl dark:text-white dark:prose-invert" set:html={about.desc}></span>
-							</p>
-						</div>
-						<div class="relative flex my-4">
-							<span class="absolute rounded-bl-2xl -top-[10rem] left-0 border-l-3 border-b-3 w-8 h-[12rem]"></span>
-							<p class="ml-10 mt-4 text-balance first-letter:capitalize!">
-								<a href="/about" class="uppercase my-2 py-4 px-6 text-white dark:text-black bg-black dark:bg-white rounded-md">
-									learn more about me
-								</a>
-							</p>
-						</div>
-					</div>
-				</div>
-			</section>
-		</div>
+        <!-- 3. The Three Pillars Section -->
+        <section class="py-16 md:py-24 bg-white dark:bg-slate-950">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">What I Do</h2>
+                    <p class="mt-4 text-lg text-slate-600 dark:text-white">
+                        A look at my three core disciplines.
+                    </p>
+                </div>
+                
+                <!-- 3-Column Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Pillar 1: Architect -->
+                    <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
+                            <!-- SVG Icon: Compass -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">The Architect</h3>
+                        <p class="text-slate-600 dark:text-white mb-4">
+                            As an architecture student at TUK, I design human-centered spaces, create detailed 3D models, and explore sustainable solutions for our urban environments.
+                        </p>
+                        <a href="/gallery/architecture" class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">See Architectural Work &rarr;</a>
+                    </div>
+                    
+                    <!-- Pillar 2: Developer -->
+                    <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
+                            <!-- SVG Icon: Code -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">The Developer</h3>
+                        <p class="text-slate-600 dark:text-white mb-4">
+                            As a self-taught developer, I build full-stack web applications, mobile apps, and AI-powered tools to automate tasks and bring creative ideas to life.
+                        </p>
+                        <a href="https://github.com/lazosee" target="_blank" class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">See Code on GitHub &rarr;</a>
+                    </div>
+                    
+                    <!-- Pillar 3: Artist & Writer -->
+                    <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
+                            <!-- SVG Icon: Feather -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">The Artist & Writer</h3>
+                        <p class="text-slate-600 dark:text-white mb-4">
+                            As a creative, I explore expression through drawing, painting, and modeling. I also share my thoughts through poetry, fiction, and non-fiction on my blog.
+                        </p>
+                        <a href="/posts" target="_blank" class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">Read My Blog &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-		{/* 4. Gallery Preview */}
-		<section class=""></section>
+        <!-- 4. My Journey Section -->
+        <section class="py-16 md:py-24 bg-slate-50 dark:bg-slate-900">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">My Journey</h2>
+                    <p class="mt-4 text-lg text-slate-600 dark:text-white">
+                        A brief timeline of how I got here.
+                    </p>
+                </div>
+                
+                <!-- Vertical Timeline -->
+                <Timeline>
+                    <!-- Timeline Item 1 -->
+                    <TimelineItem 
+                        period="2022" 
+                        event="Began Architectural Studies" 
+                        description="Enrolled at the Technical University of Kenya (TUK) to pursue my passion for design and the built environment." 
+                    />
+                    <!-- Timeline Item 2 -->
+                    <TimelineItem 
+                        period="2023" 
+                        event={`"Hello World!"`} 
+                        description="Wrote my first line of code and discovered a powerful new medium for creation and problem-solving." 
+                    />
+                    <!-- Timeline Item 3 -->
+                    <TimelineItem 
+                        period="2024" 
+                        event="Exploring Web, AI & Mobile" 
+                        description="Began diving deeper into Web development, AI, machine learning models, and cross-platform mobile app development." 
+                    />
+                    <!-- Timeline Item 4 -->
+                    <TimelineItem 
+                        period="2025" 
+                        event="Launched Personal Blog" 
+                        description={`Started <a href="https://lazaroosee.xyz" target="_blank" class="text-sky-600 underline hover:text-sky-800">lazaroosee.xyz</a> to combine my love for writing and web development, sharing insights on tech, art, and life.`} 
+                    />
+                    <TimelineItem 
+                        period="present" 
+                        event="Balancing Worlds" 
+                        description="Continuing my architectural degree while actively taking on freelance development projects and creative commissions." 
+                    />
+                </Timeline>
+            </div>
+        </section>
 
-		{/* 6. contact CTA */}
-		<section class="content-center justify-items-center">
-			<div class="flex flex-col max-w-4xl w-full p-4 sm:my-8 sm:py-12">
-				<h2 class="block leading-tight sm:leading-normal md:leading-relaxed my-4">
-					Idea Overflow? Share Your Thoughts.
-				</h2>
-				<p class="capitalize">
-					Send a message to talk about design, development, or creative writing—let's make something happen.
-				</p>
-				<a href="/contact" class="block max-w-xs w-auto content-center justify-items-center px-8 py-4 mt-8 mb-4 sm:mt-12 border-none rounded-sm text-white bg-black dark:text-black dark:bg-white hover:bg-black/70 dark:hover:bg-white/70">
-					<span class="flex w-auto uppercase font-open-sans font-semibold">Let's get talking</span>
-				</a>
-			</div>
-		</section>
+        <!-- 5. Beyond the "Work" Section -->
+        <section class="py-16 md:py-24 bg-white dark:bg-sky-950 dark:text-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <!-- Left Side (Visual) -->
+                    <div class="flex justify-center">
+                         <img src="https://placehold.co/600x720/0f172a/94a3b8?text=Candid+Shot" 
+                             alt="A candid photo of Lazaro painting, modeling, or reading"
+                             class="rounded-xl w-full max-w-md h-[480px] object-cover shadow-xl">
+                    </div>
+                    
+                    <!-- Right Side (Text) -->
+                    <div class="text-center md:text-left">
+                        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-sky-100 sm:text-4xl">When I'm Not at the Computer...</h2>
+                        <p class="mt-6 text-lg text-slate-600 dark:text-white">
+                            ...or the drafting table, you can usually find me exploring other creative outlets, diving into new topics, or simply enjoying the city.
+                        </p>
+                        <!-- Quick Facts / Hobbies -->
+                        <ul class="mt-8 space-y-4 text-lg text-slate-700 dark:text-sky-100">
+                            <li class="flex items-start">
+                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Working on a new painting or physical model.
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Writing poetry and short fiction.
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Exploring Nairobi's art galleries and architecture.
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <strong>Currently Reading:</strong> "Klara and the Sun" by Kazuo Ishiguro.
+                            </li>
+                             <li class="flex items-start">
+                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <strong>Currently Learning:</strong> Advanced 3D rendering in Blender.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Call to Action (CTA) Section -->
+        <section id="contact-link" class="bg-slate-800 dark:bg-slate-900 text-white py-16 md:py-24">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-extrabold sm:text-4xl">Let's Create Something Together</h2>
+                <p class="mt-6 text-xl text-slate-300">
+                    Whether you have a project idea, a technical challenge, or just want to talk about art, architecture, and AI, I'd love to hear from you.
+                </p>
+                <div class="mt-10">
+                    <a href="/contact" class="inline-block px-10 py-4 rounded-lg bg-sky-600 text-white font-medium text-lg shadow-lg hover:bg-sky-700 transition duration-300 transform hover:-translate-y-0.5">
+                        Send Me a Message
+                    </a>
+                </div>
+            </div>
+        </section>
 	</main>
 </MainLayout>

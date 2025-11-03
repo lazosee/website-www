@@ -20,9 +20,33 @@ const posts = defineCollection({
 			updated_at: z.coerce.date(),
 			tags: z.array(z.string()).optional(),
 			related: z.array(reference('posts')).optional(),
-			views: z.coerce.number(),
-			likes: z.coerce.number(),
 		}),
 })
 
-export const collections = { posts, categories }
+export const series = defineCollection({
+	type: 'data',
+	schema: ({ image }) =>
+		z.object({
+			slug: z.string(),
+			cover: image(),
+			title: z.string(),
+		}),
+})
+
+export const tutorials = defineCollection({
+	type: 'content',
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			snippet: z.string(),
+			series: z.string(reference('series')),
+			series_index: z.coerce.number(),
+			cover: image(),
+			published_at: z.coerce.date(),
+			updated_at: z.coerce.date(),
+			tags: z.array(z.string()).optional(),
+			related: z.array(reference('posts')).optional(),
+		}),
+})
+
+export const collections = { posts, categories, tutorials, series }

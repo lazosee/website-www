@@ -62,6 +62,7 @@ const metas: Meta[] = [
 		{ name: "twitter:image", content: cover ?? "https://github.com/oseelabs.png" },
 	]
 ---
+
 <MainLayout 
 	title={title}
 	{metas}
@@ -69,9 +70,9 @@ const metas: Meta[] = [
 	<main class="w-full h-full">
 		{/* 1. The Content Display */}
 		<section class="flex flex-col items-center justify-center w-full h-fit aspect-auto border-b-2">
-			<h2 class="block leading-relaxed w-full max-w-3xl px-2 pr-4 pt-8 sm:px-6 sm:pl-0 sm:py-12 capitalize">
+			<h1 class="block leading-relaxed w-full max-w-3xl px-2 pr-4 pt-8 sm:px-6 sm:pl-0 sm:py-12 capitalize">
 				Blog Posts
-			</h2>
+			</h1>
 			<p class="block w-full max-w-3xl my-12 mt-4 px-2 text-2xl font-semibold">
 				Explore a collection of all my posts sorted by category, date, and popularity
 			</p>
@@ -136,7 +137,7 @@ const metas: Meta[] = [
 					{/* <hr> */}
 				<main id="article-container" class="block items-center justify-center justify-items-center content-center p-2">
 					{posts && posts.length > 0 ? posts.map((p, i) => (
-						<article id={`bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 mb-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 rounded-lg">
+						<article id={`bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 mb-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 shadow-lg shadow-slate-400 dark:shadow-slate-950 rounded-lg">
 							<div class="block h-fit border-1 md:border-none">
 								<h4 class="font-lora leading-relaxed text-current text-2xl! my-4! p-2 hover:underline focus-visible:underline underline-offset-2">
 									<a class="block" href={blog_url(p.slug, p.published_at)}>
@@ -163,9 +164,6 @@ const metas: Meta[] = [
 						</p>
 					)}
 				</main>
-				<pre>
-					{/* {JSON.stringify(posts[0], null, 2)} */}
-				</pre>
 			</div>
 		</section>
 	</main>

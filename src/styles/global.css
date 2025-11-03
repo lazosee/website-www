@@ -4,7 +4,7 @@
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 @theme {
 	--font-system: system-ui;
@@ -44,6 +44,10 @@
 	img {
 		@apply italic object-cover object-center w-full h-auto text-center content-center justify-items-center;
 	}
+	input,
+	textarea {
+		@apply text-current dark:text-black;
+	}
 }
 
 @layer components {
@@ -56,10 +60,26 @@
 	.h-scrollbar {
 		@apply [&::-webkit-scrollbar]:w-auto [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full;
 	}
-}
 
-@utility btn-m-* {
-	margin: --value(btn-m-*);
+	/* Custom styles for the timeline */
+	.timeline-item {
+		@apply relative pb-10 pl-10;
+	}
+
+	/* The vertical timeline bar */
+	.timeline-item:not(:last-child)::before {
+		@apply absolute content-[""] left-[0.4375rem] top-2 -bottom-2 w-0.5 bg-slate-300;
+	}
+
+	/* The timeline dot */
+	.timeline-dot {
+		@apply absolute left-0 top-2 w-3.5 h-3.5 rounded-full bg-white dark:bg-current border-sky-500 dark:border-sky-600 border-2;
+	}
+
+	/* Ensure the last item doesn't have a trailing bar */
+	.timeline-item:last-child {
+		@apply pb-0;
+	}
 }
 
 /* Navbar Categories Dropdown */
