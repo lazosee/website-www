@@ -1,11 +1,19 @@
 ---
 import { Timeline, TimelineItem } from "@/components/tags";
+import { getLatestPosts } from "@/data/collections";
 import { about } from "@/data/me";
 import type { Meta } from "@/types/head";
-import { capitalize, titleTemplate } from "@/utils";
+import { blog_url, capitalize, titleTemplate } from "@/utils";
+import { Image } from "astro:assets";
+import { TickSvg } from "../components";
 import { MainLayout } from "../layouts";
 
 export const prerender = true;
+
+const latestPosts = await getLatestPosts()
+
+const currentlyReading = "<em>\"Klara and the Sun\"</em> by Kazuo Ishiguro."
+const currentlyLearning = "Advanced 3D rendering in Blender."
 
 // metadata
 const title = titleTemplate(capitalize(about.name), about.description)
@@ -50,7 +58,7 @@ const metas: Meta[] = [
                         </p>
                         <!-- CTA Buttons -->
                         <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                            <a href="/gallery" class="inline-block px-8 py-3 rounded-lg bg-sky-600 text-white font-medium text-center shadow-lg hover:bg-sky-700 transition duration-300 transform hover:-translate-y-0.5">
+                            <a href="/projects" class="inline-block px-8 py-3 rounded-lg bg-sky-600 text-white font-medium text-center shadow-lg hover:bg-sky-700 transition duration-300 transform hover:-translate-y-0.5">
                                 View My Work
                             </a>
                             <a href="/contact" class="inline-block px-8 py-3 rounded-lg bg-slate-100 text-slate-800 font-medium text-center shadow-lg hover:bg-slate-200 transition duration-300 transform hover:-translate-y-0.5">
@@ -60,9 +68,15 @@ const metas: Meta[] = [
                     </div>
                     <!-- Left Side (Visual) -->
                     <div class="flex justify-center">
-                        <img src="https://placehold.co/600x600/e0f2fe/0ea5e9?text=Lazaro+Osee" 
-                             alt="A professional portrait of Lazaro Osee"
-                             class="rounded-full w-80 h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] object-cover shadow-2xl border-8 border-white">
+                        <Image 
+                            src="https://placehold.co/600x600/e0f2fe/0ea5e9?text=Lazaro+Osee" 
+                            alt="A professional portrait of Lazaro Osee"
+                            quality={100}
+                            format="webp"
+                            width={800}
+                            height={800}
+                            class="rounded-full w-80 h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] object-cover shadow-2xl border-8 border-white"
+                        />
                     </div>
                 </div>
             </div>
@@ -132,7 +146,45 @@ const metas: Meta[] = [
             </div>
         </section>
 
-        <!-- 4. My Journey Section -->
+        <!-- 4. The featured posts section -->
+        <section class="py-16 md:py-24 bg-white dark:bg-slate-950">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">My Latest Posts</h2>
+                    <p class="mt-4 text-lg text-slate-600 dark:text-white">
+                        Explore my new blog posts on topics ranging from architecture to art and writing through software development and design.
+                    </p>
+                </div>
+                
+                <!-- 3-Column Grid -->
+                <div class="block content-center justify-items-center">
+                    { (latestPosts && latestPosts.length > 0) && latestPosts.map((post) => (
+                        <article class="max-w-[80ch] bg-slate-50 dark:bg-slate-900 mb-12 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
+                                <svg 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    height="24px" 
+                                    viewBox="0 -960 960 960" 
+                                    width="24px" 
+                                    fill="currentColor"
+                                >
+                                    <path d="M760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120Zm-40-160H240v60h480v-60Zm-480-60h480v-60H240v60Zm0-140h480v-240H240v240Zm0 200v60-60Zm0-60v-60 60Zm0-140v-240 240Zm0 80v-80 80Zm0 120v-60 60Z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold! text-slate-900 dark:text-slate-100 mb-3">{post.title}</h3>
+                            <p class="text-slate-600 dark:text-white mb-4">
+                                {post.snippet}
+                            </p>
+                            <a href={blog_url(post.slug, post.published_at)} class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300 capitalize">
+                                Read More &rarr;
+                            </a>
+                        </article>
+                    )) }
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. My Journey Section -->
         <section class="py-16 md:py-24 bg-slate-50 dark:bg-slate-900">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
@@ -177,7 +229,7 @@ const metas: Meta[] = [
             </div>
         </section>
 
-        <!-- 5. Beyond the "Work" Section -->
+        <!-- 6. Beyond the "Work" Section -->
         <section class="py-16 md:py-24 bg-white dark:bg-sky-950 dark:text-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -197,35 +249,39 @@ const metas: Meta[] = [
                         <!-- Quick Facts / Hobbies -->
                         <ul class="mt-8 space-y-4 text-lg text-slate-700 dark:text-sky-100">
                             <li class="flex items-start">
-                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <TickSvg />
                                 Working on a new painting or physical model.
                             </li>
                             <li class="flex items-start">
-                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <TickSvg />
                                 Writing poetry and short fiction.
                             </li>
                             <li class="flex items-start">
-                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <TickSvg />
                                 Exploring Nairobi's art galleries and architecture.
                             </li>
+                            <!-- TODO: Set the `currentlyReading` and `currenntlyLearning` through a server island for dynamism -->
                             <li class="flex items-start">
-                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <strong>Currently Reading:</strong> "Klara and the Sun" by Kazuo Ishiguro.
+                                <TickSvg />
+                                <strong>Currently Reading: </strong> <span set:html={currentlyReading}></span>
                             </li>
                              <li class="flex items-start">
-                                <svg class="flex-shrink-0 w-6 h-6 text-sky-500 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <strong>Currently Learning:</strong> Advanced 3D rendering in Blender.
+                                <TickSvg />
+                                <strong>Currently Learning: </strong> {currentlyLearning}
                             </li>
+                            <!-- TODO: End of todo -->
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 6. Call to Action (CTA) Section -->
+        <!-- 7. Call to Action (CTA) Section -->
         <section id="contact-link" class="bg-slate-800 dark:bg-slate-900 text-white py-16 md:py-24">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-extrabold sm:text-4xl">Let's Create Something Together</h2>
+                <h2 class="text-3xl font-extrabold sm:text-4xl">
+                    Let's Create Something Together
+                </h2>
                 <p class="mt-6 text-xl text-slate-300">
                     Whether you have a project idea, a technical challenge, or just want to talk about art, architecture, and AI, I'd love to hear from you.
                 </p>

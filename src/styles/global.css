@@ -7,6 +7,19 @@
 /* @custom-variant dark (&:where(.dark, .dark *)); */
 
 @theme {
+	--color-arch-100: var(--color-sky-100);
+	--color-arch-500: var(--color-sky-500);
+	--color-arch-800: var(--color-sky-800);
+	--color-art-100: var(--color-rose-100);
+	--color-art-500: var(--color-rose-500);
+	--color-art-800: var(--color-rose-800);
+	--color-software-100: var(--color-slate-100);
+	--color-software-500: var(--color-slate-500);
+	--color-software-800: var(--color-slate-800);
+	--color-personal-100: var(--color-rose-100);
+	--color-personal-500: var(--color-rose-500);
+	--color-personal-800: var(--color-rose-800);
+
 	--font-system: system-ui;
 	--font-open-sans: 'Open Sans', sans-serif;
 	--font-roboto: 'Roboto', sans-serif;
@@ -18,6 +31,10 @@
 
 	--breakpoint-xs: 32rem /* 512px*/;
 }
+
+/* @utility tab-* {
+  tab-size: --value(--tab-size-*);
+} */
 
 @layer base {
 	* {

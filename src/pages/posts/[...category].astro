@@ -69,7 +69,7 @@ const metas: Meta[] = [
 >
 	<main class="w-full h-full">
 		{/* 1. The Content Display */}
-		<section class="flex flex-col items-center justify-center w-full h-fit aspect-auto border-b-2">
+		<section class="flex flex-col items-center justify-center w-full h-fit aspect-auto pb-34 dark:bg-slate-900">
 			<h1 class="block leading-relaxed w-full max-w-3xl px-2 pr-4 pt-8 sm:px-6 sm:pl-0 sm:py-12 capitalize">
 				Blog Posts
 			</h1>
@@ -137,9 +137,9 @@ const metas: Meta[] = [
 					{/* <hr> */}
 				<main id="article-container" class="block items-center justify-center justify-items-center content-center p-2">
 					{posts && posts.length > 0 ? posts.map((p, i) => (
-						<article id={`bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 mb-4 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 shadow-lg shadow-slate-400 dark:shadow-slate-950 rounded-lg">
-							<div class="block h-fit border-1 md:border-none">
-								<h4 class="font-lora leading-relaxed text-current text-2xl! my-4! p-2 hover:underline focus-visible:underline underline-offset-2">
+						<article id={`bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 mb-4 md:mb-10 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 dark:bg-slate-950 shadow-lg shadow-slate-400 dark:shadow-slate-800 rounded-lg">
+							<div class="block h-fit border-none">
+								<h4 class="font-lora leading-relaxed text-current text-2xl! my-4! p-2 hover:underline focus:underline underline-offset-2">
 									<a class="block" href={blog_url(p.slug, p.published_at)}>
 										{p.title}
 									</a>
@@ -149,7 +149,7 @@ const metas: Meta[] = [
                                     {p.snippet}
                                 </p>
 							</div>
-							<div class="flex w-full mx-1 my-2 p-2 py-2 justify-between items-center-safe text-[1rem] font-lora font-semibold text-slate-700 dark:text-slate-100 border-1 md:border-none">
+							<div class="flex w-full mx-1 my-2 p-2 py-2 justify-between items-center-safe text-[1rem] font-lora font-semibold text-slate-700 dark:text-slate-100 border-none">
 								<time datetime={p.published_at.toISOString()} class="px-2">
 									{format(p.published_at)}
 								</time>

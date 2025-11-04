@@ -20,6 +20,9 @@ export default defineConfig({
 	},
 	integrations: [markdoc({}), react(), mdx({ optimize: true })],
 	image: {
-		remotePatterns: [{ protocol: 'https', hostname: 'picsum.photos' }],
+		remotePatterns: [
+			{ protocol: 'https', hostname: 'picsum.photos' },
+			{ protocol: 'https', hostname: 'placehold.co' },
+		],
 	},
 })

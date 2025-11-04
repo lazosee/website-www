@@ -1,0 +1,54 @@
+---
+import { type CategoryColor, get_category_colors, get_color_hex } from '@/utils';
+import { Image } from 'astro:assets';
+
+export type Props = {
+    category: string;
+    title: string;
+    description: string;
+    'link-cta': string;
+    'category-group': CategoryColor;
+    image?: string | null;
+    svg_title?: string | null;
+};
+const { image, svg_title, category, title, description, 'link-cta': linkCta, 'category-group': categoryGroup } = Astro.props;
+---
+
+<div class="project-card bg-white dark:bg-gray-950 rounded-xl shadow-lg shadow-gray-200 dark:shadow-gray-800 overflow-hidden transform transition duration-500 hover:scale-[1.03] hover:shadow-xl border border-slate-200 dark:border-slate-800" data-category="architecture">
+    { image && (
+        <Image 
+            src={image} 
+            alt="Sustainable Urban Housing Project" 
+            quality={100}
+            format="webp"
+            width={300}
+            height={200}
+            fit="cover"
+            fetchpriority="high"
+            class="w-full h-48 object-cover"
+        />
+    )}
+    { (!image && svg_title) && (
+        <Image 
+            src={`https://placehold.co/600x400/${get_color_hex(categoryGroup)}/ffffff?text=${svg_title.replace(" ", "+")}`} 
+            alt="Sustainable Urban Housing Project" 
+            quality={100}
+            format="webp"
+            width={300}
+            height={200}
+            fit="cover"
+            fetchpriority="high"
+            class="w-full h-48 object-cover"
+        />
+    )}
+    <div class="p-6">
+        <span class:list={[
+            "inline-block text-xs font-medium px-2.5 py-0.5 rounded-full mb-3 capitalize",
+            get_category_colors(categoryGroup)
+        ]}>{category}</span>
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 capitalize">{title}</h3>
+        <p class="text-slate-600 dark:text-white mb-4">{description}</p>
+        <a href="#" class="font-medium text-sky-600 dark:text-sky-500 hover:text-sky-800 dark:hover:text-sky-600 transition duration-300">
+            {linkCta} &rarr;</a>
+    </div>
+</div>

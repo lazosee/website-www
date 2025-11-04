@@ -1,0 +1,91 @@
+---
+import { CardItem } from "@/components/tags";
+import { MainLayout } from "@/layouts";
+import type { Meta } from "@/types/head";
+import { titleTemplate } from "@/utils";
+
+export const prerender = true;
+
+// metadata
+const title = titleTemplate("Gallery")
+/* TODO: Edit the following metadata */
+const description = ""
+const cover = ""
+const metas: Meta[] = [
+		{ name: "title", content: title },
+		{ name: "description", content: description },
+		{ name: "canonical", content: "https://www.lazaroosee.xyz/" },
+		{ name: "type", content: "website" },
+		{ name: "author", content: "Lazaro Osee" },
+		{ name: "copyright", content: "Lazaro Osee" },
+		{ name: "robots", content: "index, follow" },
+		{ name: "image", content: cover },
+		{ name: "og:title", content: title },
+		{ name: "og:description", content: description },
+		{ name: "og:image", content: cover },
+		{ name: "og:url", content: "https://www.lazaroosee.xyz" },
+		{ name: "twitter:card", content: "summary_large_image" },
+		{ name: "twitter:title", content: title },
+		{ name: "twitter:decsription", content: description },
+		{ name: "twitter:image", content: cover },
+	]
+---
+
+<MainLayout {title} {metas}>
+    <!-- Main Content -->
+    <main class="overflow-x-hidden">
+        <!-- 1. Gallery Header -->
+        <section class="bg-white dark:bg-slate-950 py-16 md:py-24 border-b border-slate-200 dark:border-slate-800">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <span class="text-sky-600 dark:text-sky-500 font-semibold uppercase tracking-wide">My Work</span>
+                <h1 class="mt-2 text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Project Gallery</h1>
+                <p class="mt-6 text-xl text-slate-600 dark:text-white max-w-3xl mx-auto">
+                    A curated collection of my projects across architecture, software development, and creative arts.
+                </p>
+            </div>
+        </section>
+
+        <!-- 2. Filter & Projects Section -->
+        <section class="py-16 md:py-24">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Filter Buttons -->
+                <div id="filter-nav" class="flex flex-wrap justify-center gap-4 mb-12">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="architecture">Architecture</button>
+                    <button class="filter-btn" data-filter="software">Software</button>
+                    <button class="filter-btn" data-filter="art-writing">Art & Writing</button>
+                </div>
+                
+                <!-- Project Grid -->
+                <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                    <CardItem 
+                        category="Art & Writing" 
+                        category-group="art" 
+                        title="Nairobi Sketches Series" 
+                        description="A collection of ink and watercolor sketches of Nairobi's iconic architecture."
+                        link-cta="View Gallery" 
+                        svg_title="Nairobi Sketches"
+                    />
+                    <CardItem 
+                        category="Sustainable Architecture" 
+                        category-group="arch" 
+                        title="Sustainable Urban Housing" 
+                        description="A conceptual design for high-density, low-impact housing in Nairobi."
+                        link-cta="View Details" 
+                        svg_title="Sustainable Housing"
+                    />
+                    <CardItem 
+                        category="Art & Writing" 
+                        category-group="art" 
+                        title={'"Digital Echoes"'} 
+                        description="A self-published digital chapbook of poems exploring tech and humanity."
+                        link-cta="Read on Blog" 
+                        svg_title="Poetry Chapbook"
+                    />
+                </div>
+            </div>
+        </section>
+    </main>
+</MainLayout>
