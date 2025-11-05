@@ -11,6 +11,9 @@ export const prerender = true
 
 export const getStaticPaths = (async() => {
     const posts = await getCollection('posts')
+
+    // Write all post_data to the database if not existing
+
     const paths = posts
         .sort((a, b) => b.data.published_at.valueOf() - a.data.published_at.valueOf())
         .map((post, i) => ({
@@ -30,7 +33,7 @@ export const getStaticPaths = (async() => {
         }
     }));
     // 👇 Check the generated paths here!
-    console.log('Generated Paths:', paths.map(p => `/posts/${p.params.year}/${p.params.slug}`)) 
+    // console.log('Generated Paths:', paths.map(p => `/posts/${p.params.year}/${p.params.slug}`)) 
     return paths;
 }) satisfies GetStaticPaths;
 
@@ -71,6 +74,7 @@ const metas: Meta[] = [
 	title={title}
 	{metas}
 >
+    <span id="slug" data-slug={blog.slug} class="sr-only"></span>
     <PostLayout
         slug={blog.slug} 
         frontmatter={blog.data} 
@@ -82,3 +86,24 @@ const metas: Meta[] = [
         <Content />
     </PostLayout>
 </MainLayout>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const slug = document.getElementById('slug')!.dataset.slug as string;
+
+    console.log({ slug })
+    updateViews(slug);
+
+    async function updateViews(slug: string) {
+        //
+       const { data, error } = await actions.postViews({ slug });
+
+       if (data) console.log(data[0].viewCount)
+
+       if (error) {
+            console.error("Could not update view count: ", error)
+       }
+    };
+</script>
+

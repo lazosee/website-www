@@ -4,4 +4,7 @@ declare namespace App {
 	interface Locals extends NetlifyLocals {
 		// ...
 	}
+	interface SessionData {
+		userId: string | null
+	}
 }

@@ -1,7 +1,7 @@
 {
-  "name": "blog-www",
+  "name": "lazaroosee.xyz",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "dev": "astro dev --host",
     "build": "astro build",
@@ -16,6 +16,8 @@
     "@astrojs/mdx": "^4.3.9",
     "@astrojs/netlify": "^6.6.0",
     "@astrojs/react": "^4.4.0",
+    "@astrojs/rss": "^4.0.13",
+    "@astrojs/sitemap": "^3.6.0",
     "@lueur/blog-utils": "^1.20250824.11",
     "@netlify/neon": "^0.1.0",
     "@supabase/supabase-js": "^2.75.0",
@@ -23,6 +25,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
     "astro": "^5.15.1",
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
     "postgres": "^3.4.7",
@@ -33,6 +36,7 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.19",
+    "@types/bcrypt": "^6.0.0",
     "drizzle-kit": "^0.31.5"
   }
 }

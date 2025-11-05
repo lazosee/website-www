@@ -1,0 +1,60 @@
+---
+import { format, initials } from "@/utils";
+import { Image } from "astro:assets";
+
+export const prerender = false;
+
+type Props = {
+    id: string,
+    fullname: string,
+    body: string,
+    postedAt: Date;
+    repliesCount: number;
+}
+const { body, fullname, id, postedAt, repliesCount } = Astro.props;
+---
+
+<div class="bg-sky-400/5 dark:bg-sky-600/5 m-2 my-4 rounded-xl overflow-hidden">
+    <div class="flex items-center justify-between gap-4 p-4 bg-sky-200/2 dark:bg-sky-500/2">
+        <div class="w-10 h-10 rounded-full overflow-hidden">
+            <Image
+                src={`https://placehold.co/600x400/237ec9/ffffff?text=${initials(fullname)}`}
+                alt={fullname}
+                width={400}
+                height={400}
+                format="webp"
+                quality={100}
+                fit="cover"
+                class="w-full h-full aspect-square object-center object-cover"
+            />
+        </div>
+        <div class="block flex-1">
+            <p class="block text-md">{fullname}</p>
+            <time class="block text-sm" datetime={postedAt.toISOString()}>
+                {format(postedAt)}
+            </time>
+        </div>
+    </div>
+    <div class="block p-4 py-8">{body}</div>
+    <div class="flex items-stretch justify-between gap-8 p-4 py-2">
+        <div class="flex gap-6">
+            <button class="cursor-pointer p-2 px-4 bg-sky-500/5 rounded-full justify-center items-center flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" class="fill-current">
+                    <path d="M840-640q32 0 56 24t24 56v80q0 7-2 15t-4 15L794-168q-9 20-30 34t-44 14H280v-520l240-238q15-15 35.5-17.5T595-888q19 10 28 28t4 37l-45 183h258Zm-480 34v406h360l120-280v-80H480l54-220-174 174ZM160-120q-33 0-56.5-23.5T80-200v-360q0-33 23.5-56.5T160-640h120v80H160v360h120v80H160Zm200-80v-406 406Z"/>
+                </svg>
+                <span>like</span>
+            </button>
+            <button class="cursor-pointer p-2 px-4 bg-sky-500/5 rounded-full justify-center items-center flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" class="fill-current">
+                    <path d="m273-480 116 116q12 12 11.5 28T388-308q-12 11-28 11.5T332-308L148-492q-12-12-12-28t12-28l184-184q11-11 27.5-11t28.5 11q12 12 12 28.5T388-675L273-560h367q83 0 141.5 58.5T840-360v120q0 17-11.5 28.5T800-200q-17 0-28.5-11.5T760-240v-120q0-50-35-85t-85-35H273Z"/>
+                </svg>
+                <span>reply</span>
+            </button>
+        </div>
+        {repliesCount > 0 && (
+            <button>
+                <span>View {repliesCount} replies</span>
+            </button>
+        )}
+    </div>
+</div>

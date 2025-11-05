@@ -50,3 +50,10 @@ export function uppercase(str: string): string {
 		.map((char) => char.toUpperCase())
 		.join('')
 }
+
+export function initials(str: string, splitChar = ' ') {
+	return str
+		.split(splitChar)
+		.map((div) => div.charAt(0).toUpperCase())
+		.join('')
+}

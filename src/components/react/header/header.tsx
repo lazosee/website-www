@@ -42,13 +42,13 @@ export const Navbar: FC<PropsWithChildren<{ links: Link[] }>> = ({ links }) => {
 			>
 				{links.map((link, idx) => (
 					<Fragment key={`frag-${idx.toString()}`}>
-						<span
+						{/* <span
 							key={`sep-${idx.toString()}`}
 							className="h-[inherit] w-3 m-0 p-0 z-10 bg-current"
-						></span>
+						></span> */}
 						<li
 							key={idx.toString()}
-							className="nav-li flex items-center justify-center w-full h-full m-0 p-0 not-last:border-b-2 md:border-none hover:bg-slate-300 focus-visible:bg-slate-300 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800"
+							className="nav-li flex items-center justify-center w-full h-full m-0 p-0 not-last:border-b-2 md:border-none hover:bg-slate-300 focus-visible:bg-slate-300 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 rounded-xl overflow-hidden"
 						>
 							<a
 								href={link.href}

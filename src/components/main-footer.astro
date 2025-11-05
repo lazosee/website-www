@@ -31,20 +31,23 @@ import { footer_links, nav_links, social_links, TITLE } from "@/data/nav";
     <div class="flex w-full max-w-4xl justify-center items-center gap-3 my-4">
         <ul class="flex list-none gap-3">
             {footer_links && footer_links.map((l, i) => (
-                <li>
-                    <a href={l.href} class="hover:underline focus-visible:underline underline-offset-2">
+                <li class="mx-2">
+                    <a href={l.href} class="flex gap-1 items-end justify-center hover:underline focus-visible:underline underline-offset-2">
+                        {l.icon && <l.icon />}
                         {l.label}
                     </a>
                 </li>
             ))}
         </ul>
     </div>
-    <div class="flex w-full max-w-4xl justify-center items-center gap-3">
+    <div class="flex flex-col w-full max-w-4xl justify-center items-center gap-3">
         <p class="flex flex-wrap justify-center items-center gap-1 w-full">
             <span>&copy;</span>
             <time id="copy-year" datetime={new Date().toISOString()}>{new Date().getUTCFullYear()}</time>
             <span>{TITLE}.</span>
-            <span class="flex items-center gap-2">
+        </p>
+        <div class="block">
+            <span class="flex text-sm font-light items-center gap-2">
                 <span>Built with</span>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
                     <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
@@ -52,6 +55,6 @@ import { footer_links, nav_links, social_links, TITLE } from "@/data/nav";
                 <span>by</span>
                 <a href="https://github.com/lazosee" target="_blank" aria-label="Lazaro Osee's Github Link" class="underline italic underline-offset-2">Lazaro Osee</a>
             </span>
-        </p>
+        </div>
     </div>
 </footer>

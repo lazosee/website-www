@@ -1,34 +1,131 @@
-import { type InferInsertModel, type InferSelectModel } from 'drizzle-orm'
-import { integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { count, eq, isNull, sql } from 'drizzle-orm'
+import {
+	alias,
+	boolean,
+	integer,
+	pgTable,
+	pgView,
+	text,
+	timestamp,
+	uuid,
+} from 'drizzle-orm/pg-core'
 
-export const categoriesTable = pgTable('categories_table', {
-	id: uuid('id').unique('unique_post_category_id').primaryKey().defaultRandom(),
-	title: text('title').notNull(),
-	slug: text('slug').unique('unique_post_category_slug').notNull(),
+/// 0. Schemas
+// export const publicSchema = pgSchema('public')
+
+/// 1. Tables
+export const postsDataTable = pgTable('posts_data', {
+	id: uuid('id').notNull().primaryKey().defaultRandom(),
+	slug: text('slug').unique().notNull(),
+	viewCount: integer('number_of_view').notNull().default(0),
 })
 
-export const postsTable = pgTable('posts_table', {
-	id: uuid('id').unique('unique_post_id').primaryKey().defaultRandom(),
-	title: text('title').notNull(),
-	snippet: text('snippet').notNull().default(''),
+export const usersDataTable = pgTable('users_data', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	fullname: text('fullname').notNull(),
+	email: text('email').unique().notNull(),
+	pass: text('pass').notNull(),
+	image: text('image_path').default(sql`NULL`),
+})
+
+export const commentsDataTable = pgTable('comments_data', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	slug: text('slug')
+		.notNull()
+		.references(() => postsDataTable.slug, {
+			onDelete: 'cascade',
+		}),
+	parentId: uuid('parent_id').default(sql`NULL`),
+	userId: uuid('user_id')
+		.notNull()
+		.references(() => usersDataTable.id, {
+			onDelete: 'cascade',
+		}),
 	body: text('body').notNull(),
-	slug: text('slug').unique('unique_post_slug').notNull(),
-	categoryId: uuid('category_id')
-		.notNull()
-		.references(() => categoriesTable.id, { onDelete: 'cascade' }),
-	thumbnailUrl: text('thumbnail_url').notNull(),
-	readingTime: integer('reading_time').notNull().default(1),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at')
-		.notNull()
-		.$onUpdate(() => new Date()),
-	tags: text('tags').array().notNull().default([]),
-	postViews: integer('post_views').notNull().default(0),
-	postLikes: integer('post_likes').notNull().default(0),
+	postedAt: timestamp('posted_at').notNull().defaultNow(),
 })
 
-export type NewCategory = InferInsertModel<typeof categoriesTable>
-export type Category = InferSelectModel<typeof categoriesTable>
+export const likesDataTable = pgTable('likes_data', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	parentId: uuid('parent_id'),
+	userId: uuid('user_id')
+		.notNull()
+		.unique()
+		.references(() => usersDataTable.id, {
+			onDelete: 'cascade',
+		}),
+	isPositive: boolean('is_positive').notNull().default(true),
+	postedAt: timestamp('posted_at').notNull().defaultNow(),
+})
 
-export type NewPost = InferInsertModel<typeof postsTable>
-export type Post = InferSelectModel<typeof postsTable>
+/// 2. Aliases
+export const repliesDataTable = alias(commentsDataTable, 'reply')
+
+/// 3. Views
+export const topLevelCommentsView = pgView('top_level_comments').as((qb) => {
+	return qb
+		.select({
+			id: commentsDataTable.id,
+			slug: commentsDataTable.slug,
+			userId: commentsDataTable.userId,
+			username: usersDataTable.fullname,
+			userImage: usersDataTable.image,
+			body: commentsDataTable.body,
+			likesCount: count(likesDataTable.id).as('likesCount'),
+			repliesCount: count(repliesDataTable.id).as('repliesCount'),
+			postedAt: commentsDataTable.postedAt,
+		})
+		.from(commentsDataTable)
+		.innerJoin(usersDataTable, eq(commentsDataTable.userId, usersDataTable.id))
+		.innerJoin(repliesDataTable, eq(commentsDataTable.id, repliesDataTable.parentId))
+		.innerJoin(likesDataTable, eq(commentsDataTable.id, usersDataTable.id))
+		.where(isNull(commentsDataTable.parentId))
+		.groupBy(
+			commentsDataTable.id,
+			commentsDataTable.userId,
+			usersDataTable.fullname,
+			usersDataTable.image
+			// commentsDataTable.slug,
+			// commentsDataTable.body,
+			// commentsDataTable.postedAt
+		)
+})
+
+export const likesView = pgView('likes').as((qb) => {
+	return qb
+		.select({
+			id: likesDataTable.id,
+			userId: likesDataTable.userId,
+			parentId: likesDataTable.parentId,
+			time: likesDataTable.postedAt,
+		})
+		.from(likesDataTable)
+		.where(eq(likesDataTable.isPositive, true))
+})
+
+export const dislikesView = pgView('dislikes').as((qb) => {
+	return qb
+		.select({
+			id: likesDataTable.id,
+			userId: likesDataTable.userId,
+			parentId: likesDataTable.parentId,
+			time: likesDataTable.postedAt,
+		})
+		.from(likesDataTable)
+		.where(eq(likesDataTable.isPositive, false))
+})
+
+export const postsView = pgView('posts').as((qb) => {
+	return qb
+		.select({
+			id: postsDataTable.id,
+			slug: postsDataTable.slug,
+			viewCount: postsDataTable.viewCount,
+			likesCount: count(likesView.id).as('number_of_likes'),
+			dislikesCount: count(dislikesView.id).as('number_of_dislikes'),
+		})
+		.from(postsDataTable)
+		.innerJoin(likesView, eq(postsDataTable.id, likesView.parentId))
+		.innerJoin(dislikesView, eq(postsDataTable.id, dislikesView.parentId))
+		.groupBy(postsDataTable.id)
+})

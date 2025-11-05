@@ -7,6 +7,7 @@ import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry, ReferenceContentEntry } from 'astro:content';
 import { getEntry, getEntries } from 'astro:content';
+import { Comment } from '@/components'
 
 type Props = {
     slug: CollectionEntry<"posts">['slug']
@@ -111,6 +112,26 @@ const relatedPosts = related.map((r) => ({
                     </ul>
                 </div>
             )}
+
+            <!-- TODO: Add comments here... -->
+            <Comment {slug} server:defer />
+
+            {/* <- Previous | Next -> */}
+            <div class="flex flex-col-reverse content-center justify-items-center gap-4 bg-current/1 rounded-md p-1 sm:p-2">
+                {previous && (
+                    <a aria-label={previous.title} title={previous.title} href={blog_url(previous.slug, previous.year)} class="previous bg-current/1 group m-1 p-2 flex flex-col w-full text-slate-900 dark:text-slate-100 items-start-safe justify-center float-left rounded-md">
+                        <span class="uppercase italic text-current/40">previous</span>
+                        <span class="group-hover:underline group-focus:underline underline-offset-2 decoration-1 w-fit">{previous.title}</span>
+                    </a>
+                )}
+                {next && (
+                    <a aria-label={next.title} title={next.title} href={blog_url(next.slug, next.year)} class="flex flex-col w-full next bg-current/1 order-1 group m-1 p-2  text-slate-900 dark:text-slate-100 items-end-safe justify-center float-end rounded-md">
+                        <span class="uppercase italic text-current/40">next</span>
+                        <span class="group-hover:underline group-focus:underline underline-offset-2 decoration-1">{next.title}</>
+                    </a>
+                )}
+            </div>
+
             {frontmatter.related && (
                 <div class="block mx-1 my-3 px-1 py-4">
                     <h3 class="block uppercase text-3xl leading-relaxed my-6">
@@ -135,21 +156,6 @@ const relatedPosts = related.map((r) => ({
                     </div>
                 </div>
             )}
-
-            <div class="flex flex-col-reverse content-center justify-items-center gap-4 bg-current/1 rounded-md p-1 sm:p-2">
-                {previous && (
-                    <a aria-label={previous.title} title={previous.title} href={blog_url(previous.slug, previous.year)} class="previous bg-current/1 group m-1 p-2 flex flex-col w-full text-slate-900 dark:text-slate-100 items-start-safe justify-center float-left rounded-md">
-                        <span class="uppercase italic text-current/40">previous</span>
-                        <span class="group-hover:underline group-focus:underline underline-offset-2 decoration-1 w-fit">{previous.title}</span>
-                    </a>
-                )}
-                {next && (
-                    <a aria-label={next.title} title={next.title} href={blog_url(next.slug, next.year)} class="flex flex-col w-full next bg-current/1 order-1 group m-1 p-2  text-slate-900 dark:text-slate-100 items-end-safe justify-center float-end rounded-md">
-                        <span class="uppercase italic text-current/40">next</span>
-                        <span class="group-hover:underline group-focus:underline underline-offset-2 decoration-1">{next.title}</>
-                    </a>
-                )}
-            </div>
         </footer>
     </main>
 </div>

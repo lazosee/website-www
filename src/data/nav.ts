@@ -1,10 +1,12 @@
+import { RSS } from '@/assets/icons'
 import type { Link } from '@/types/shared'
+import type { SvgComponent } from 'astro/types'
 
-export const TITLE = 'The Osee Archives' as const
+export const TITLE = 'Lazaro Osee' as const
 
 export const nav_links: Link[] = [
 	{ href: '/posts', label: 'Posts' },
-	{ href: '/about', label: 'About' },
+	{ href: '/projects', label: 'Projects' },
 	{ href: '/contact', label: 'Contact' },
 	{ href: '/gallery', label: 'Gallery' },
 	// { href: '/resources', label: 'Resources' },
@@ -33,8 +35,8 @@ export const social_links: (Link & { icon: string })[] = [
 	},
 ] as const
 
-export const footer_links: Link[] = [
+export const footer_links: (Link & { icon?: SvgComponent })[] = [
 	{ href: '/privacy-policy', label: 'Privacy Policy' },
-	{ href: '/sitemap', label: 'Sitemap' },
-	{ href: '/rss.xml', label: 'RSS' },
+	{ href: '/sitemap-index.xml', label: 'Sitemap' },
+	{ href: '/rss.xml', label: 'RSS', icon: RSS },
 ] as const

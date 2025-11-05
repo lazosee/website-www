@@ -9,16 +9,40 @@ import react from '@astrojs/react'
 
 import mdx from '@astrojs/mdx'
 
+import sitemap from '@astrojs/sitemap'
+
 // https://astro.build/config
 export default defineConfig({
 	output: 'server',
+	site: 'https://www.lazaroosee.xyz',
 	adapter: netlify({
 		edgeMiddleware: true,
+		imageCDN: true,
+		devFeatures: {
+			environmentVariables: true,
+			images: true,
+		},
 	}),
 	vite: {
 		plugins: [tailwindcss()],
 	},
-	integrations: [markdoc({}), react(), mdx({ optimize: true })],
+	integrations: [
+		markdoc({}),
+		react(),
+		mdx({ optimize: true }),
+		sitemap({
+			changefreq: 'weekly',
+			priority: 0.7,
+			entryLimit: 10_000,
+			filter: (page) => !page.includes('/admin'),
+			serialize: (item) => {
+				if (/admin/.test(item.url)) {
+					return undefined
+				}
+				return item
+			},
+		}),
+	],
 	image: {
 		remotePatterns: [
 			{ protocol: 'https', hostname: 'picsum.photos' },

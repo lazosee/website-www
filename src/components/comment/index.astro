@@ -1,0 +1,146 @@
+---
+import { db } from '@/db';
+import { commentsDataTable, usersDataTable, repliesDataTable } from '@/db/schema';
+import { eq, and, isNull, count } from 'drizzle-orm';
+import{ CommentItem } from "@/components";
+
+export const prerender = false;
+
+type Props = {
+    slug: string,
+}
+const { slug } = Astro.props;
+const userId = await Astro.session?.get("userId")
+
+const topLevelComments = await db
+    .select({
+        id: commentsDataTable.id,
+        fullname: usersDataTable.fullname,
+        body: commentsDataTable.body,
+        postedAt: commentsDataTable.postedAt,
+        repliesCount: count(repliesDataTable.id).as("repliesCount"),
+    })
+    .from(commentsDataTable)
+    .where(
+        and(
+            eq(commentsDataTable.slug, slug), 
+            isNull(commentsDataTable.parentId)
+        )
+    )
+    .innerJoin(
+        usersDataTable, 
+        eq(commentsDataTable.userId, usersDataTable.id)
+    )
+    .leftJoin(
+        repliesDataTable,
+        eq(commentsDataTable.id, repliesDataTable.parentId)
+    )
+    .groupBy(
+        commentsDataTable.id,
+        usersDataTable.id,
+        repliesDataTable.parentId,
+        commentsDataTable.userId,
+        usersDataTable.fullname,
+    );
+
+console.log(topLevelComments.map(c => c.body))
+---
+
+<div class="">
+    <span data-slug={slug}></span>
+    <h3>Comments</h3>
+    { userId ? (
+        <form name="comment" class="form max-w-[60ch] gap-8">
+            <fieldset class="flex flex-col m-4">
+                <label for="comment" class="flex justify-between items-center p-2 text-md tracking-wide font-system">
+                    <span class="">Create a New Comment</span>
+                </label>
+                <textarea name="comment" id="comment" placeholder="Such a nice post..." class="form-textarea field-sizing-content w-full min-h-24 rounded-xl p-3 text-black"></textarea>
+            </fieldset>
+            <div class="fieldset m-4 block content-end justify-items-end">
+                <button type="submit" class="block content-center justify-items-center btn m-1 p-3 px-6 rounded-xl border-sky-200 dark:border-sky-700 bg-sky-300 dark:bg-sky-900 hover:bg-sky-500 dark:hover:bg-sky-950 border-1">Comment</button>
+            </div>
+        </form>
+    ) : (
+        <details>
+            <summary class="m-4 cursor-pointer">
+                Sign in to comment
+            </summary>
+            <form name="sign-up" class="form max-w-[60ch] gap-8">
+                <fieldset class="flex m-4 items-center justify-between gap-4">
+                    <div class="block">
+                        <label class="p-2 text-sm tracking-wide font-system" for="firstname">Firstname</label>
+                        <input type="text" id="firstname" name="firstname" class="form-input w-full rounded-xl px-4 text-black" placeholder="John" />
+                    </div>
+                    <div class="block">
+                        <label for="lastname" class="p-2 text-sm tracking-wide font-system">Lastname</label>
+                        <input type="text" id="lastname" name="lastname" class="form-input w-full rounded-xl px-4 text-black" placeholder="Doe" />
+                    </div>
+                </fieldset>
+                <fieldset class="flex flex-col m-4">
+                    <label for="email" class="p-2 text-sm tracking-wide font-system">Email</label>
+                    <input type="email" name="email" id="email" placeholder="johndoe@email.com" class="form-input rounded-xl px-4 text-black" />
+                </fieldset>
+                <fieldset class="flex flex-col m-4">
+                    <label for="password" class="flex justify-between items-center p-2 text-sm tracking-wide font-system">
+                        <span class="">Password</span>
+                        <div class="gap-2">
+                            <label for="show-pass" class="text-sm pr-2">show</label>
+                            <input type="checkbox" id="show-pass" class="pass-show form-checkbox rounded-full">
+                        </div>
+                    </label>
+                    <input type="password" name="password" id="password" placeholder="John@Doe1234" class="form-input rounded-xl px-4 text-black" />
+                </fieldset>
+                <div class="fieldset m-4 block content-end justify-items-end">
+                    <button type="submit" class="block content-center justify-items-center btn m-1 p-3 px-6 rounded-xl border-sky-200 dark:border-sky-700 bg-sky-300 dark:bg-sky-900 hover:bg-sky-500 dark:hover:bg-sky-950 border-1">Signup</button>
+                </div>
+            </form>
+        </details>
+    )}
+
+    <div class="block m-2 p-2">
+        {topLevelComments && topLevelComments.map(comment => (
+            <CommentItem {...comment} />
+            // <pre>{JSON.stringify(comment, null, 2)}</pre>
+        ))}
+    </div>
+</div>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const signUpForm = document.forms.namedItem("sign-up");
+    const commentForm = document.forms.namedItem("comment");
+
+    const slug = ((document.querySelector('span[data-slug]') as HTMLSpanElement)?.dataset.slug) as string
+
+    if (signUpForm) signUpForm.onsubmit = async function(ev) {
+        ev.preventDefault();
+
+        const formData = new FormData(signUpForm)
+        const json = {
+            firstname: formData.get("firstname")?.toString() ?? "",
+            lastname: formData.get("lastname")?.toString() ?? "",
+            email: formData.get("email")?.toString() ?? "",
+            password: formData.get("password")?.toString() ?? "",
+        }
+        const { data, error } = await actions.userSignup(json)
+        if (!error && data) {
+            signUpForm.reset()
+        }
+    }
+
+    if (commentForm) commentForm.onsubmit = async function(ev) {
+        ev.preventDefault();
+
+        const formData = new FormData(commentForm)
+        const json = {
+            comment: formData.get("comment")?.toString() ?? "",
+            slug: slug.trim()
+        }
+        const { data, error } = await actions.comment(json)
+        if (!error && data) {
+            commentForm.reset()
+        }
+    }
+</script>
