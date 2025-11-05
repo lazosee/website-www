@@ -76,9 +76,9 @@ export const topLevelCommentsView = pgView('top_level_comments').as((qb) => {
 			postedAt: commentsDataTable.postedAt,
 		})
 		.from(commentsDataTable)
-		.innerJoin(usersDataTable, eq(commentsDataTable.userId, usersDataTable.id))
-		.innerJoin(repliesDataTable, eq(commentsDataTable.id, repliesDataTable.parentId))
-		.innerJoin(likesDataTable, eq(commentsDataTable.id, usersDataTable.id))
+		.leftJoin(usersDataTable, eq(commentsDataTable.userId, usersDataTable.id))
+		.leftJoin(repliesDataTable, eq(commentsDataTable.id, repliesDataTable.parentId))
+		.leftJoin(likesDataTable, eq(commentsDataTable.id, usersDataTable.id))
 		.where(isNull(commentsDataTable.parentId))
 		.groupBy(
 			commentsDataTable.id,
@@ -125,7 +125,7 @@ export const postsView = pgView('posts').as((qb) => {
 			dislikesCount: count(dislikesView.id).as('number_of_dislikes'),
 		})
 		.from(postsDataTable)
-		.innerJoin(likesView, eq(postsDataTable.id, likesView.parentId))
-		.innerJoin(dislikesView, eq(postsDataTable.id, dislikesView.parentId))
+		.leftJoin(likesView, eq(postsDataTable.id, likesView.parentId))
+		.leftJoin(dislikesView, eq(postsDataTable.id, dislikesView.parentId))
 		.groupBy(postsDataTable.id)
 })
