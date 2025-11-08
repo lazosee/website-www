@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = {
+  children?: string[];
+} & HTMLAttributes<"code">;
+
+const { children, ...rest } = Astro.props;
+console.log(children)
+---
+
+<code
+  class="code text-sky-900 dark:text-sky-100 bg-slate-200/60 dark:bg-slate-800/60 rounded-md m-1 p-0.5 px-2"
+>
+  {Array.isArray(children) ? children.join(' ') : children}
+</code>
+
+

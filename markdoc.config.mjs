@@ -1,5 +1,6 @@
 import { component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config'
 
+
 export default defineMarkdocConfig({
 	variables: {
 		// environment: process.env.IS_PROD ? 'prod' : 'dev',
@@ -19,13 +20,9 @@ export default defineMarkdocConfig({
 				},
 			},
 		},
-		list: {
-			attributes: nodes.list.attributes,
-			render: component('src/components/tags', 'List'),
-		},
-		item: {
-			attributes: nodes.item.attributes,
-			render: component('src/components/tags', 'Item'),
+		code: {
+			...nodes.code,
+			render: component('src/components/tags', 'Code'),
 		},
 		blockquote: {
 			attributes: nodes.blockquote.attributes,

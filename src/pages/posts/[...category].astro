@@ -77,7 +77,7 @@ const metas: Meta[] = [
 				Explore a collection of all my posts sorted by category, date, and popularity
 			</p>
 			<div id="posts" class="grid w-full place-items-center">
-				<header class="flex max-w-3xl w-full font-lora justify-between items-center content-center justify-items-center border-b-2 border-slate-400 dark:border-slate-400 p-0">
+				<header class="flex max-w-3xl w-full mx-1 font-lora justify-between items-center content-center justify-items-center border-b-2 border-slate-400 dark:border-slate-400 p-0">
 					<ul class="hidden sm:flex max-w-3xl w-full p-0 list-none gap-2">
 						<li class:list={[ 'p-2', { ' bg-slate-700/40 border-b-2 border-slate-400 dark:border-slate-400': !category } ]}>
 							<h3 class="text-lg font-inter">
@@ -95,7 +95,7 @@ const metas: Meta[] = [
                     <button id="categories-toggle" popovertarget="categories" class="sm:hidden m-2 border-current/50 text-current/80 font-roboto bg-current/30 border-2 p-2 rounded-md">
                         Categories
                     </button>
-                    <span class="m-2 p-2 font-oswald border-1 rounded-md capitalize">{(categories.find((c) => c.data.slug == category))?.data.title ?? 'All'}</span>
+                    <span class="sm:hidden m-2 p-2 font-oswald border-1 rounded-md capitalize">{(categories.find((c) => c.data.slug == category))?.data.title ?? 'All'}</span>
 					<ul popover id="categories" class='category-items border-2 border-current sm:hidden w-fit min-w-60 m-2 rounded-md'>
                         <div class="flex justify-between uppercase items-center border-b-2 h-12">
                             <span class="text-xl font-open-oswald p-2 m-1">categories</span>
@@ -119,22 +119,7 @@ const metas: Meta[] = [
                             )) }
                         </div>
 					</ul>
-					<!-- <div class="w-auto max-w-sm min-w-[200px]">				
-						<div class="relative">
-							<select
-								name="sort-by" id="sort-by"
-								class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:text-white text-lg border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
-								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="latest">Latest</option>
-								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="popular">Popular</option>
-								<option class="bg-slate-300 dark:bg-slate-900 border-2" value="oldest">Oldest</option>
-							</select>
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700 dark:text-slate-100">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-							</svg>
-						</div>
-					</div> -->
 				</header>
-					{/* <hr> */}
 				<main id="article-container" class="block items-center justify-center justify-items-center content-center p-2">
 					{posts && posts.length > 0 ? posts.map((p, i) => (
 						<article id={`bgpost-${i}-${p.slug}`} data-views={Math.floor(Math.random() * i * 100)} data-date={p.published_at.getTime()} class="article-item block content-center justify-items-center mx-2 mb-4 md:mb-10 px-2 py-4 max-w-3xl w-full items-center justify-center bg-current/5 dark:bg-slate-950 shadow-lg shadow-slate-400 dark:shadow-slate-800 rounded-lg">

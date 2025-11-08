@@ -1,6 +1,7 @@
 ---
 import { TITLE } from "@/data/nav";
 import "@/styles/global.css";
+import "@/styles/starwind.css";
 import type { Meta, Title } from "@/types/head";
 import { MainFooter, MainHeader } from "../components";
 
@@ -13,7 +14,7 @@ const { title, metas } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="scheme-light-dark scroll-smooth">
+<html lang="en" class="scheme-light-dark dark scroll-smooth">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -39,3 +40,28 @@ const { title, metas } = Astro.props;
 		<MainFooter />
 	</body>
 </html>
+
+
+<script is:inline>
+	// Optional: Save user preference to local storage
+	if (localStorage.getItem("theme") === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+		document.documentElement.classList.add('dark');
+	} else {
+		document.documentElement.classList.remove('dark');
+	}
+
+	function toggleTheme() {
+		if (document.documentElement.classList.contains('dark')) {
+			document.documentElement.classList.remove('dark');
+			localStorage.setItem("theme", 'light');
+		} else {
+			document.documentElement.classList.add('dark');
+			localStorage.setItem("theme", 'dark');
+		}
+
+		//
+		document.querySelectorAll("[data-theme]").forEach((el) => {
+			el.textContent = document.documentElement.classList.contains('dark') ? 'light_mode' : 'dark_mode';
+		})
+	}
+</script>

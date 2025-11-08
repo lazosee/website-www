@@ -8,6 +8,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry, ReferenceContentEntry } from 'astro:content';
 import { getEntry, getEntries } from 'astro:content';
 import { Comment } from '@/components'
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/starwind/breadcrumb';
 
 type Props = {
     slug: CollectionEntry<"posts">['slug']
@@ -35,13 +36,13 @@ const relatedPosts = related.map((r) => ({
 }));
 ---
 
-<div class="flex flex-row gap-4 pb-4 md:h-screen">
-    <aside class="hidden sticky top-0 left-0 md:relative md:block md:inset-auto w-1/3 md:w-1/4 max-w-sm h-full text-white bg-slate-800 m-3 mb-6 px-2 py-4 rounded-xl text-xl">
+<div class="flex flex-row gap-4 pb-8 md:h-[85vh] bg-white dark:bg-sky-950">
+    <aside class="hidden sticky top-0 left-0 md:relative md:block md:inset-auto w-1/3 md:w-1/4 max-w-sm h-full overflow-y-scroll bg-slate-100 dark:bg-slate-950  m-3 mb-6 px-2 py-4 rounded-xl text-xl [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
         <div class="m-2">
             {headings && (
                 <h3 class="text-2xl font-light first-letter:uppercase leading-relaxed my-4">in this article</h3>
                 <hr />
-                <ol type="I" class="flex flex-col list-[lower-roman] my-2">
+                <ol class="flex flex-col list-none my-2">
                     {headings.map((h, i) => (
                         <li class=""  class:list={[
                                 "text-xl my-1.5 list-item list-inside", 
@@ -63,26 +64,24 @@ const relatedPosts = related.map((r) => ({
             )}
         </div>
     </aside>
-    <main class="flex-1 block content-center justify-items-center items-center justify-center w-full h-full pt-10 pb-20 overflow-x-hidden overflow-y-scroll! [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
+    <main class="flex-1 block content-center justify-items-center items-center justify-center w-full bg-slate-100 dark:bg-slate-950 h-full m-3 mb-6 px-2 rounded-xl text-xl pt-10 pb-20 overflow-x-hidden overflow-y-scroll! [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:dark:bg-slate-600 [&::-webkit-scrollbar-thumb]:mx-0.1 [&::-webkit-scrollbar-thumb]:rounded-full">
         <header class="mx-1 my-4">
             <div class="block content-center justify-items-center m-1">
-                <div class="flex flex-wrap items-center w-full gap-0 font-light text-md text-blue-700 dark:text-blue-300 bg-slate-400/20 dark:bg-slate-800/40 rounded-md p-2 sm:px-4">
-                    <a href="/" class="hover:underline focus:underline underline-offset-2 decoration-1">
-                        <span class="capitalize font-inter">home</span>
-                    </a>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="1.6rem" width="1.6rem" viewBox="0 -960 960 960" class="fill-black/70 dark:fill-white/70 transform rotate-180">
-                        <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
-                    </svg>
-                    <a href="/posts" class="hover:underline focus:underline underline-offset-2 decoration-1">
-                        <span class="capitalize font-inter">posts</span>
-                    </a>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="1.6rem" width="1.6rem" viewBox="0 -960 960 960" class="fill-black/70 dark:fill-white/70 transform rotate-180">
-                        <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
-                    </svg>
-                    <a href={blog_url(slug, frontmatter.published_at)} class="hover:underline focus:underline underline-offset-2 decoration-1">
-                        <span class="capitalize font-inter">{frontmatter.title}</span>
-                    </a>
-                </div>
+                <Breadcrumb class="bg-current/4 p-2 rounded">
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator>/</BreadcrumbSeparator>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/posts">Posts</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator>/</BreadcrumbSeparator>
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>{frontmatter.title}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
                 <a href={`/posts?category=${category?.data.slug ?? frontmatter.category}`} class="block w-fit text-center m-2 mt-4 p-2 px-6 rounded-md bg-slate-400/60 dark:bg-slate-600/60">
                     {category?.data.title ?? frontmatter.category}
                 </a>
@@ -159,12 +158,3 @@ const relatedPosts = related.map((r) => ({
         </footer>
     </main>
 </div>
-
-<script>
-    (function() {
-        // window.scrollTo({
-        //     top: document.body.scrollHeight,
-        //     behavior: 'smooth'
-        // });
-    })()
-</script>

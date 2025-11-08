@@ -1,6 +1,7 @@
 ---
 import { MainLayout, PostLayout } from "@/layouts";
 import type { Meta } from "@/types/head";
+import { blog_url } from "@/utils";
 import { titleTemplate } from "@/utils/functions";
 import { calcReadingTime } from "@lueur/blog-utils";
 import type { GetStaticPaths } from "astro";
@@ -62,11 +63,13 @@ const metas: Meta[] = [
 		{ name: "og:title", content: blog.data.title },
 		{ name: "og:description", content: blog.data.snippet },
 		{ name: "og:image", content: cover },
-		{ name: "og:url", content: "https://www.lazaroosee.xyz" },
+		{ name: "og:url", content: new URL(blog_url(blog.slug, blog.data.published_at), Astro.site).href },
+		{ name: "og:type", content: "article" },
 		{ name: "twitter:card", content: "summary_large_image" },
 		{ name: "twitter:title", content: blog.data.title },
 		{ name: "twitter:decsription", content: blog.data.snippet },
 		{ name: "twitter:image", content: cover },
+		{ name: "twitter:url", content: new URL(blog_url(blog.slug, blog.data.published_at), Astro.site).href },
 	]
 ---
 

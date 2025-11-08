@@ -59,8 +59,4 @@ export function sortAndReplaceElements(
 
 	// Append the fragment to the parent (re-inserts them in sorted order)
 	parentContainer.appendChild(fragment)
-
-	// You can remove the console.clear() and console.log(parentContainer) for production
-	console.log(`Elements sorted by ${sortBy} and replaced.`)
-	console.log(parentContainer)
 }

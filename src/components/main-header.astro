@@ -1,11 +1,78 @@
 ---
 import { nav_links, TITLE } from '@/data/nav';
-import { Navbar } from './react/header/header';
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger } from '@/components/starwind/sheet';
+import Button from './starwind/button';
+import Separator from './starwind/separator';
 ---
 
-<header class="relative w-full p-4 flex justify-between items-center border-2 border-sky-600/20 bg-sky-100 dark:bg-sky-950">
-    <a href="/" class="mr-auto uppercase font-playfair font-semibold text-xl px-4">
+<header class="sticky top-0 z-50 w-full p-4 flex justify-between items-center font-lora border-2 border-sky-600/20 bg-sky-100 dark:bg-sky-950">
+    <Button href="/" class="mr-auto uppercase font-playfair font-semibold text-xl px-4">
         {TITLE}
-    </a>
-    <Navbar links={nav_links} client:load />
+    </Button>
+    <nav class="relative w-auto ml-auto p-0 flex flex-row items-center justify-center">
+        <ul
+            class='hidden md:w-full md:relative md:flex md:flex-row justify-between border-collapse'
+        >
+            {nav_links.map((link, idx) => (
+                <li
+                    class="nav-li flex items-center justify-center w-full h-full m-0 p-0 not-last:border-b-2 md:border-none hover:bg-slate-300 focus-visible:bg-slate-300 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 rounded-xl overflow-hidden"
+                >
+                    <Button
+                        href={link.href}
+                        class="flex items-center justify-start md:justify-center w-full h-full p-4 text-xl hover:bg-slate-300 focus-visible:bg-slate-300 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800"
+                    >
+                        {link.label}
+                    </Button>
+                </li>
+            ))}
+        </ul>
+        <Button id="theme-toggle" onclick="toggleTheme()" class="relative w-fit p-4 hover:bg-slate-400 focus-visible:bg-slate-400 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800">
+            <span data-theme class="font-material-symbols text-2xl">dark_mode</span>
+        </Button>
+        <Sheet role="dialog" class="md:hidden">
+            <SheetTrigger asChild>
+                <Button onclick="" role="menu" class="relative w-fit p-4 hover:bg-slate-400 focus-visible:bg-slate-400 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 md:hidden">
+                    <svg
+                        width="1.4rem"
+                        height="1.4rem"
+                        viewBox="0 0 32 32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-6! h-6!"
+                    >
+                        <path d="M2, 2L30, 2" />
+                        <path d="M2, 15L25, 15" />
+                        <path d="M2, 28L20, 28" />
+                    </svg>
+                </Button>
+            </SheetTrigger>
+            <SheetContent class="bg-sky-400 dark:bg-sky-700">
+                <SheetHeader class="block content-center-safe justify-items-center">
+                    <Button href="/" class="text-2xl">{TITLE}</Button>
+                </SheetHeader>
+                <Separator orientation="horizontal" color="#00a6f4" />
+                <ul class="flex flex-col items-center justify-center w-full p-4">
+                    {nav_links.map((link, idx) => (
+                        <li
+                            class="nav-li flex items-center justify-center w-full h-full m-0 p-0 border-none hover:bg-slate-300 focus-visible:bg-slate-300 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800 rounded-xl overflow-hidden"
+                        >
+                            <Button
+                                href={link.href}
+                                class="flex items-center justify-start md:justify-center w-full h-full p-4 text-lg hover:bg-slate-300 focus-visible:bg-slate-300 dark:hover:bg-slate-800 dark:focus-visible:bg-slate-800"
+                            >
+                                {link.label}
+                            </Button>
+                        </li>
+                    ))}
+                </ul>
+                <SheetFooter>
+                    <!-- Hello -->
+                </SheetFooter>
+            </SheetContent>
+        </Sheet>
+    </nav>
 </header>
