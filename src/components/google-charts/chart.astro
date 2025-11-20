@@ -1,0 +1,24 @@
+---
+export interface Props {
+    chartType: 'LineChart' | 'BarChart' | 'PieChart' | 'ColumnChart';
+    data: any[][];
+    options: object;
+    id: string;
+}
+
+const { chartType, data, options, id } = Astro.props;
+---
+<div id={id} class="w-full h-full min-h-[300px]"></div>
+
+<script define:vars={{ chartType, data, options, chartId: id }}>
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        const dataTable = google.visualization.arrayToDataTable(data);
+        const chartContainer = document.getElementById(chartId);
+        if (chartContainer) {
+            const chart = new google.visualization[chartType](chartContainer);
+            chart.draw(dataTable, options);
+        }
+    }
+</script>
