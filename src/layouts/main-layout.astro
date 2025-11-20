@@ -11,6 +11,9 @@ type Props = {
 }
 
 const { title, metas } = Astro.props;
+
+const ipGeoUrl = new URL("/api/ipgeo", Astro.site).toString()
+console.log("URL ", ipGeoUrl)
 ---
 
 <!doctype html>
@@ -35,6 +38,7 @@ const { title, metas } = Astro.props;
 		/>
 	</head>
 	<body class="block antialiased w-full h-full min-h-screen p-0 m-0 text-lg font-atkinson bg-white dark:bg-slate-950 overflow-y-auto">
+		<div id="geo-url" class="w-0 h-0" data-ip-geo-url={ipGeoUrl}></div>
         <MainHeader />
 		<slot />
 		<MainFooter />
@@ -64,4 +68,20 @@ const { title, metas } = Astro.props;
 			el.textContent = document.documentElement.classList.contains('dark') ? 'light_mode' : 'dark_mode';
 		})
 	}
+</script>
+
+<script>
+	import { actions } from "astro:actions";
+
+	const ipGeoUrl = document.getElementById("geo-url")?.dataset.ipGeoUrl ?? "http://localhost:4321"
+	console.log(ipGeoUrl)
+
+	// Call visit-log action
+	const { data, error } = await actions.visitLog({
+		page: window.location.pathname,
+		visit_time: new Date(),
+		ip_geo_url: ipGeoUrl
+	})
+
+	console.log({ data, error })
 </script>

@@ -1,6 +1,6 @@
 import { defineMiddleware } from 'astro:middleware'
 
-export const onRequest = defineMiddleware((context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
 	// 1. Admin route protection
 	if (
 		context.url.pathname == '/admin' ||

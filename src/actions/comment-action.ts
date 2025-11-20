@@ -21,11 +21,14 @@ export const comment = defineAction({
 		const { comment, slug } = input
 
 		try {
-			const [res] = await db.insert(commentsDataTable).values({
-				body: comment.trim(),
-				slug: slug.trim(),
-				userId: userId,
-			})
+			const [res] = await db
+				.insert(commentsDataTable)
+				.values({
+					body: comment.trim(),
+					slug: slug.trim(),
+					userId: userId,
+				})
+				.returning()
 
 			if (res) {
 				return {

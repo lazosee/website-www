@@ -9,7 +9,7 @@ Disallow: /admin/
 Disallow: /api/
 
 # Sitemap
-Sitemap: ${new URL('rss.xml', import.meta.url).href}
+Sitemap: ${new URL('sitemap-index.xml', context.url.href)}
 `
 	return new Response(robotsTxt, {
 		headers: {
