@@ -1,0 +1,21 @@
+---
+type Props = {
+    as: "div" | "section" | "article";
+    'class': string;
+}
+const { as, class: className } = Astro.props as Props;
+---
+
+{as === "div" ? (
+    <div class:list={[className]}>
+        <slot />
+    </div>
+) : as === "section" ? (
+    <section class:list={[className]}>
+        <slot />
+    </section>
+) : (
+    <article class:list={[className]}>
+        <slot />
+    </article>
+)}

@@ -1,31 +1,104 @@
 ---
-import { MainLayout } from "@/layouts";
-import { titleTemplate } from "@/utils/functions";
+import { db } from "@/db/index"
+import { usersDataTable } from "@/db/schema"
+import '@/styles/global.css'
+import { initials } from "@/utils"
+import { Image } from "astro:assets"
 
+const users = await db.select().from(usersDataTable);
 ---
 
-<MainLayout title={titleTemplate('Admin')} metas={[]}>
-    <div class="">
-        <aside class=""></aside>
-        <main class="">
-            <section class="gallery">
-                <h2>New Gallery Item</h2>
-                <!-- 
-                    id -> uuid
-                    title -> varchar(200)
-                    slug -> varchar(255)
-                    category -> varchar(150)
-                    image_href -> varchar(400)
-                 -->
-                <ul>
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
-                    <li>1</li>
-                </ul>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard</title>
+    </head>
+    <body class="antialised content-center justify-items-center">
+        <main class="block w-full m-2 p-8 gap-8 border-2 rounded-lg shadow-lg max-w-3xl">
+            <h1 class="text-3xl font-bold mb-4">Admin Dashboard</h1>
+            <section class="block w-full mb-6">
+                <h2 class="text-2xl font-semibold mb-2">User Management</h2>
+                <p>Manage user accounts, roles, and permissions.</p>
+                
+                <table class="table table-auto w-full border border-collapse rounded-xl overflow-y-scroll">
+                    <caption class="caption-bottom text-lg font-semibold mb-2">
+                        A list of users who have signed in.
+                    </caption>
+                    <thead class="">
+                        <tr class="border-black bg-slate-800 text-white text-xl font-semibold">
+                            <th align="left" class="
+                            p-4 font-semibold text-lg font-[system-ui]">
+                                Id
+                            </th>
+                            <th align="left" class="
+                            p-4 font-semibold text-lg font-[system-ui]">
+                                Image
+                            </th>
+                            <th align="left" class="
+                            p-4 font-semibold text-lg font-[system-ui]">
+                                Fullname
+                            </th>
+                            <th align="left" class="
+                            p-4 font-semibold text-lg font-[system-ui]">
+                                Email
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="" style="">
+                        {users.map((user, id) => (
+                            <tr class="border border-black hover:border-black hover:bg-slate-800 hover:text-white even:bg-slate-200 even:text-slate-950 odd:text-slate-950
+                            odd:bg-slate-100">
+                                <td class="p-3">{id + 1}</td>
+                                <td class="p-3">
+                                    {user.image ? <Image 
+                                        src={user.image} 
+                                        alt={user.fullname}
+                                        width={60}
+                                        height={60}
+                                        format="webp"
+                                        quality={100}
+                                        fit="cover"
+                                        class="w-10 h-10 aspect-square object-center object-cover rounded-full" /> : <Image
+                                        src={
+                                        `https://placehold.co/600x400/237ec9/ffffff?text=${initials(user.fullname)}`
+                                        }
+                                        alt={user.fullname}
+                                        width={60}
+                                        height={60}
+                                        format="webp"
+                                        quality={100}
+                                        fit="cover"
+                                        class="w-10 h-10 aspect-square object-center object-cover rounded-full"
+                                    />}
+                                </td>
+                                <td>{user.fullname}</td>
+                                <td>{user.email}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-slate-800 text-white text-xl font-semibold">
+                            <td class="p-4" colspan="3">Total Users</td>
+                            <td class="p-4">{users.length}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </section>
+            <section class="mb-6">
+                <h2 class="text-2xl font-semibold mb-2">Content Moderation</h2>
+                <p>Review and moderate user-generated content.</p>
+            </section>
+            <section class="mb-6">
+                <h2 class="text-2xl font-semibold mb-2">Site Analytics</h2>
+                <p>View site traffic and user engagement statistics.</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-semibold mb-2">Settings</h2>
+                <p>Configure site settings and preferences.</p>
             </section>
         </main>
-    </div>
-</MainLayout>
+    </body>
+</html>

@@ -1,0 +1,43 @@
+---
+import type { SvgComponent } from 'astro/types';
+import Wrapper from './wrapper.astro';
+
+type Props = {
+    icon?: string | SvgComponent;
+    heading: string;
+    description: string;
+    as?: "div" | "section" | "article";
+    link: {
+        href: string;
+        text: string;
+        target?: "_blank" | "_self" | "_parent" | "_top";
+    };
+};
+
+const { heading, description, link, icon = "", as = "div" } = Astro.props;
+---
+
+<Wrapper as={as} class="bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:shadow-xl focus:shadow-xl overflow-hidden max-w-[80ch]">
+    <div class="flex w-full items-center gap-8">
+        <div class="inline-flex items-center justify-center rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4 aspect-square w-12 h-12">
+            <slot name="icon" />
+        </div>
+        <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
+            {heading}
+        </h3>
+    </div>
+    <hr class="-mx-8 my-4" />
+    <p class:list={[
+        "text-slate-600 dark:text-white mb-4", 
+        {
+            "py-8": as === "article"
+        }
+    ]}>
+        {description}
+    </p>
+    <hr class="-mx-8 my-4 mb-6" />
+    <a href={link.href} target={link.target ?? "_self"} class="flex gap-4 items-center font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">
+        {link.text}
+        <slot name="link-icon" />
+    </a>
+</Wrapper>

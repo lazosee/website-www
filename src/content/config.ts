@@ -8,6 +8,28 @@ const categories = defineCollection({
 	}),
 })
 
+const projects = defineCollection({
+	type: 'content',
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			snippet: z.string(),
+			cover: image().optional(),
+			date: z.coerce.date(),
+			tags: z.array(z.string()).optional(),
+			related: z.array(reference('projects')).optional(),
+			items: z
+				.array(
+					z.object({
+						type: z.enum(['text', 'image', 'video', 'link']),
+						content: z.string(),
+						caption: z.string().optional(),
+					})
+				)
+				.optional(),
+		}),
+})
+
 const posts = defineCollection({
 	type: 'content',
 	schema: ({ image }) =>
@@ -49,4 +71,4 @@ export const tutorials = defineCollection({
 		}),
 })
 
-export const collections = { posts, categories, tutorials, series }
+export const collections = { posts, categories, tutorials, series, projects }

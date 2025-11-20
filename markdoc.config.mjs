@@ -1,6 +1,5 @@
 import { component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config'
 
-
 export default defineMarkdocConfig({
 	variables: {
 		// environment: process.env.IS_PROD ? 'prod' : 'dev',
@@ -27,6 +26,23 @@ export default defineMarkdocConfig({
 		blockquote: {
 			attributes: nodes.blockquote.attributes,
 			render: component('src/components/tags', 'Blockquote'),
+		},
+	},
+	tags: {
+		'project-items': {
+			render: component('src/components/tags', 'ProjectCollectionItem'),
+			attributes: {
+				data: {
+					type: 'Array',
+					default: [],
+					validate: (value) => {
+						if (!Array.isArray(value)) {
+							throw new Error('The "data" attribute must be an array.')
+						}
+						return true
+					},
+				},
+			},
 		},
 	},
 })

@@ -1,0 +1,66 @@
+---
+import "@/styles/global.css";
+
+if (Astro.request.method === "POST") {
+    const formData = await Astro.request.formData();
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    // Simple authentication logic (replace with real authentication)
+    if (username === import.meta.env.ADMIN_USERNAME && password === import.meta.env.ADMIN_PASSWORD) {
+        // Set a cookie or session here for authenticated admin user
+        Astro.cookies.set("auth", Buffer.from(`${username}:${password}`, 'utf8').toString("base64"), {
+            httpOnly: true,
+            secure: true,
+            sameSite: true,
+            path: "/admin",
+            maxAge: 60 * 60 * 24, // 1 day
+        });
+
+        // Redirect to admin dashboard on successful login
+        return Astro.redirect("/admin/");
+    } else {
+        // Redirect back to login with an error message on failure
+        return Astro.redirect("/admin/login?error=invalid_credentials");
+    }
+}  
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Login</title>
+    </head>
+    <body class="antialised w-screen h-screen content-center justify-items-center">
+        <main class="block m-2 p-8 gap-8 border-2 rounded-lg shadow-lg max-w-xl">
+            <h1 class="leading-normal tracking-wider mx-2 my-4 mb-8">Admin Login</h1>
+            <form action="/admin/login" method="POST" class="flex flex-col w-full gap-4 items-center justify-center">
+                <div class="form-group flex flex-col w-full m-2">
+                    <label for="username" class="text-slate-950 py-2">Username:</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required 
+                        class="form-input rounded-lg p-2 px-4"
+                        placeholder="John Doe"
+                    />
+                </div>
+                <div class="form-group flex flex-col w-full m-2">
+                    <label for="password"  class="text-slate-950 py-2">Password:</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        class="form-input rounded-lg p-2 px-4"
+                        placeholder="@Johndoe1234" 
+                    />
+                </div>
+                <button type="submit" class="block w-full m-2 px-8 py-3 text-lg rounded-lg bg-slate-950 text-white">Login</button>
+            </form>
+        </main>
+    </body>
+</html>

@@ -1,5 +1,5 @@
 ---
-import { Timeline, TimelineItem } from "@/components/tags";
+import { Pillar, Timeline, TimelineItem } from "@/components/tags";
 import { getLatestPosts } from "@/data/collections";
 import { about } from "@/data/me";
 import type { Meta } from "@/types/head";
@@ -106,43 +106,60 @@ const metas: Meta[] = [
                 <!-- 3-Column Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <!-- Pillar 1: Architect -->
-                    <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
-                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
-                            <!-- SVG Icon: Compass -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">The Architect</h3>
-                        <p class="text-slate-600 dark:text-white mb-4">
-                            As an architecture student at TUK, I design human-centered spaces, create detailed 3D models, and explore sustainable solutions for our urban environments.
-                        </p>
-                        <a href="/gallery/architecture" class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">See Architectural Work &rarr;</a>
-                    </div>
+                    <Pillar 
+                        heading="The Architect" 
+                        description="As an architecture student at TUK, I design human-centered spaces, create detailed 3D models, and explore sustainable solutions for our urban environments."
+                        link={{ 
+                            href: "/gallery/architecture", 
+                            text: "See Architectural Work" 
+                        }} 
+                    >
+                        <svg slot="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                        </svg>
+                        <svg slot="link-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M646-440H200q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h446L532-634q-12-12-11.5-28t11.5-28q12-12 28.5-12.5T589-691l183 183q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L589-269q-12 12-28.5 11.5T532-270q-11-12-11.5-28t11.5-28l114-114Z"/>
+                        </svg>
+                    </Pillar>
                     
                     <!-- Pillar 2: Developer -->
-                    <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
-                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
-                            <!-- SVG Icon: Code -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">The Developer</h3>
-                        <p class="text-slate-600 dark:text-white mb-4">
-                            As a self-taught developer, I build full-stack web applications, mobile apps, and AI-powered tools to automate tasks and bring creative ideas to life.
-                        </p>
-                        <a href="https://github.com/lazosee" target="_blank" class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">See Code on GitHub &rarr;</a>
-                    </div>
+                    <Pillar 
+                        heading="The Developer" 
+                        description="As a self-taught developer, I build full-stack web applications, mobile apps, and AI-powered tools to automate tasks and bring creative ideas to life."
+                        link={{ 
+                            href: "https://github.com/lazosee", 
+                            text: "See Code on GitHub",
+                            target: "_blank"
+                        }} 
+                    >
+                        <svg slot="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        <svg slot="link-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M646-440H200q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h446L532-634q-12-12-11.5-28t11.5-28q12-12 28.5-12.5T589-691l183 183q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L589-269q-12 12-28.5 11.5T532-270q-11-12-11.5-28t11.5-28l114-114Z"/>
+                        </svg>
+                    </Pillar>
                     
                     <!-- Pillar 3: Artist & Writer -->
-                    <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
-                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
-                            <!-- SVG Icon: Feather -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">The Artist & Writer</h3>
-                        <p class="text-slate-600 dark:text-white mb-4">
-                            As a creative, I explore expression through drawing, painting, and modeling. I also share my thoughts through poetry, fiction, and non-fiction on my blog.
-                        </p>
-                        <a href="/posts" target="_blank" class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300">Read My Blog &rarr;</a>
-                    </div>
+                    <Pillar 
+                        heading="The Artist & Writer" 
+                        description="As a creative, I explore expression through drawing, painting, and modeling. I also share my thoughts through poetry, fiction, and non-fiction on my blog."
+                        link={{ 
+                            href: "/posts", 
+                            text: "Read My Blog"
+                        }} 
+                    >
+                        <svg slot="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                            <line x1="16" y1="8" x2="2" y2="22"></line>
+                            <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                        </svg>
+                        <svg slot="link-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M646-440H200q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h446L532-634q-12-12-11.5-28t11.5-28q12-12 28.5-12.5T589-691l183 183q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L589-269q-12 12-28.5 11.5T532-270q-11-12-11.5-28t11.5-28l114-114Z"/>
+                        </svg>
+                    </Pillar>
                 </div>
             </div>
         </section>
@@ -160,30 +177,39 @@ const metas: Meta[] = [
                 <!-- 3-Column Grid -->
                 <div class="block content-center justify-items-center">
                     { (latestPosts && latestPosts.length > 0) && latestPosts.map((post) => (
-                        <article class="max-w-[80ch] bg-slate-50 dark:bg-slate-900 mb-12 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-white mb-4">
-                                <svg 
-                                    xmlns="http://www.w3.org/2000/svg" 
-                                    height="24px" 
-                                    viewBox="0 -960 960 960" 
-                                    width="24px" 
-                                    fill="currentColor"
-                                >
-                                    <path d="M760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120Zm-40-160H240v60h480v-60Zm-480-60h480v-60H240v60Zm0-140h480v-240H240v240Zm0 200v60-60Zm0-60v-60 60Zm0-140v-240 240Zm0 80v-80 80Zm0 120v-60 60Z"/>
-                                </svg>
-                            </div>
-                            <h3 class="text-2xl font-bold! text-slate-900 dark:text-slate-100 mb-3">{post.title}</h3>
-                            <p class="text-slate-600 dark:text-white mb-4">
-                                {post.snippet}
-                            </p>
-                            <a href={blog_url(post.slug, post.published_at)} class="font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 transition duration-300 capitalize">
-                                Read More &rarr;
-                            </a>
-                        </article>
+                        <Pillar 
+                            as="article"
+                            heading={post.title}
+                            description={post.snippet}
+                            link={{ 
+                                href: blog_url(post.slug, post.published_at), 
+                                text: "Read More"
+                            }} 
+                        >
+                            <svg 
+                                slot="icon"
+                                xmlns="http://www.w3.org/2000/svg" 
+                                height="24px" 
+                                viewBox="0 -960 960 960" 
+                                width="24px" 
+                                fill="currentColor"
+                                class="aspect-square w-6"
+                            >
+                                <path d="M760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120Zm-40-160H240v60h480v-60Zm-480-60h480v-60H240v60Zm0-140h480v-240H240v240Zm0 200v60-60Zm0-60v-60 60Zm0-140v-240 240Zm0 80v-80 80Zm0 120v-60 60Z"/>
+                            </svg>
+                            <svg slot="link-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M646-440H200q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h446L532-634q-12-12-11.5-28t11.5-28q12-12 28.5-12.5T589-691l183 183q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L589-269q-12 12-28.5 11.5T532-270q-11-12-11.5-28t11.5-28l114-114Z"/>
+                            </svg>
+                        </Pillar>
                     )) }
                 </div>
-                <div class="block content-center justify-items-center w-full max-w-[80ch]">
-                    <a href="/posts" class="block content-center justify-items-center text-center w-full h-full bg-slate-50 dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 capitalize text-xl font-semibold transform transition duration-500 hover:scale-[1.03] hover:shadow-xl">View all Posts</a>
+                <div class="block content-center justify-items-center w-full my-12 max-w-[80ch]">
+                    <a 
+                        href="/posts" 
+                        class="block content-center justify-items-center text-center w-full h-full font-medium text-sky-600 dark:text-sky-300 hover:text-sky-800 dark:hover:text-sky-400 bg-slate-50 dark:bg-slate-900 p-8 rounded-xl border border-slate-200 dark:border-slate-800 capitalize text-xl transform transition duration-500 hover:scale-[1.03] hover:shadow-xl focus:scale-[1.03] focus:shadow-xl"
+                    >
+                        View all Posts
+                    </a>
                 </div>
             </div>
         </section>

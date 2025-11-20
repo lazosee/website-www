@@ -1,0 +1,84 @@
+---
+import { Image } from 'astro:assets';
+
+type Props = {
+    data: {
+        type: 'text' | 'image' | 'video' | 'link';
+        content: string;
+        caption: string;
+    }[];
+}
+const { data } = Astro.props;
+
+const figures = data.map((i) => (i.type === 'image' || i.type === 'video') ? i : null).filter(Boolean);
+---
+
+<div class="flex flex-col w-full flex-wrap gap-6 justify-center items-center">
+    {data.map((item, id) => {
+        switch (item.type) {
+            case 'link':
+                return (
+                    <div class="block w-full h-auto aspect-auto rounded-xl bg-current/5 border content-center justify-items-center shadow-sky-800 hover:shadow-md transition-shadow duration-300">
+                        <a 
+                            href={item.content}
+                            target={item.content.startsWith("https://") ? "_blank" : "_self"} 
+                            rel="noopener noreferrer" 
+                            class="flex gap-2 w-full m-4 p-4 text-xl text-blue-600 underline underline-offset-2"
+                        >
+                            {item.caption || item.content}
+                            {item.content.startsWith("https://") && (
+                                <svg 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    height="24" 
+                                    viewBox="0 -960 960 960" 
+                                    width="24" fill="currentColor"
+                                >
+                                    <path 
+                                        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240q17 0 28.5 11.5T480-800q0 17-11.5 28.5T440-760H200v560h560v-240q0-17 11.5-28.5T800-480q17 0 28.5 11.5T840-440v240q0 33-23.5 56.5T760-120H200Zm560-584L416-360q-11 11-28 11t-28-11q-11-11-11-28t11-28l344-344H600q-17 0-28.5-11.5T560-800q0-17 11.5-28.5T600-840h200q17 0 28.5 11.5T840-800v200q0 17-11.5 28.5T800-560q-17 0-28.5-11.5T760-600v-104Z"
+                                    />
+                                </svg>
+                            )}
+                        </a>
+                    </div>
+                );
+            case 'text':
+                return (
+                    <div class="flex flex-col items-center justify-center w-full rounded-xl bg-current/5 border shadow-sky-800 hover:shadow-md transition-shadow duration-300 py-4 px-2">
+                        <p class="not-prose text-black dark:text-white flex flex-col flex-wrap w-full h-auto content-center justify-items-center p-4 text-balance text-center">{item.content}</p>
+                    </div>
+                );
+            case 'image':
+                return (
+                    <figure class="block w-full h-auto aspect-auto rounded-xl bg-current/5 border content-center justify-items-center shadow-sky-800 hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                        <Image 
+                            src={item.content} 
+                            alt={item.caption || 'Image'}
+                            width={1080}
+                            height={720}
+                            quality={100}
+                            format="webp" 
+                            fit="cover"
+                            class="rounded-none! w-full h-auto object-cover border-b" 
+                        />
+                        {item.caption && (
+                            <figcaption class="p-4 text-sm italic text-gray-500">Fig {figures.indexOf(item) + 1}: {item.caption}</figcaption>
+                        )}
+                    </figure>
+                );
+            case 'video':
+                return (
+                    <figure class="block w-full h-auto aspect-auto rounded-xl bg-current/5 border content-center justify-items-center shadow-sky-800 hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                        <video autoplay muted loop height="1080" width="1920" controls class="">
+                            <source src={item.content} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                        {item.caption && (
+                            <figcaption class="p-4 text-sm italic text-gray-500">
+                                Fig {figures.indexOf(item) + 1}: {item.caption}
+                            </figcaption>
+                        )}
+                    </figure>
+                );
+        }
+    })}
+</div>

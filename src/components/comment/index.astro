@@ -1,7 +1,8 @@
 ---
+import { eq, and, isNull, count } from 'drizzle-orm';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/starwind/accordion";
 import { db } from '@/db';
 import { commentsDataTable, usersDataTable, repliesDataTable } from '@/db/schema';
-import { eq, and, isNull, count } from 'drizzle-orm';
 import{ CommentItem } from "@/components";
 
 export const prerender = false;
@@ -42,11 +43,10 @@ const topLevelComments = await db
         commentsDataTable.userId,
         usersDataTable.fullname,
     );
-
-console.log(topLevelComments.map(c => c.body))
+//
 ---
 
-<div class="">
+<div class="block my-4 w-full max-w-3xl rounded-xl bg-transparent border-none">
     <span data-slug={slug}></span>
     <h3>Comments</h3>
     { userId ? (
@@ -58,47 +58,51 @@ console.log(topLevelComments.map(c => c.body))
                 <textarea name="comment" id="comment" placeholder="Such a nice post..." class="form-textarea field-sizing-content w-full min-h-24 rounded-xl p-3 text-black"></textarea>
             </fieldset>
             <div class="fieldset m-4 block content-end justify-items-end">
-                <button type="submit" class="block content-center justify-items-center btn m-1 p-3 px-6 rounded-xl border-sky-200 dark:border-sky-700 bg-sky-300 dark:bg-sky-900 hover:bg-sky-500 dark:hover:bg-sky-950 border-1">Comment</button>
+                <button type="submit" class="block content-center justify-items-center btn m-1 p-3 px-6 rounded-xl border-sky-200 dark:border-sky-700 bg-sky-300 dark:bg-sky-900 hover:bg-sky-500 dark:hover:bg-sky-950 border">Comment</button>
             </div>
         </form>
     ) : (
-        <details>
-            <summary class="m-4 cursor-pointer">
-                Sign in to comment
-            </summary>
-            <form name="sign-up" class="form max-w-[60ch] gap-8">
-                <fieldset class="flex m-4 items-center justify-between gap-4">
-                    <div class="block">
-                        <label class="p-2 text-sm tracking-wide font-system" for="firstname">Firstname</label>
-                        <input type="text" id="firstname" name="firstname" class="form-input w-full rounded-xl px-4 text-black" placeholder="John" />
-                    </div>
-                    <div class="block">
-                        <label for="lastname" class="p-2 text-sm tracking-wide font-system">Lastname</label>
-                        <input type="text" id="lastname" name="lastname" class="form-input w-full rounded-xl px-4 text-black" placeholder="Doe" />
-                    </div>
-                </fieldset>
-                <fieldset class="flex flex-col m-4">
-                    <label for="email" class="p-2 text-sm tracking-wide font-system">Email</label>
-                    <input type="email" name="email" id="email" placeholder="johndoe@email.com" class="form-input rounded-xl px-4 text-black" />
-                </fieldset>
-                <fieldset class="flex flex-col m-4">
-                    <label for="password" class="flex justify-between items-center p-2 text-sm tracking-wide font-system">
-                        <span class="">Password</span>
-                        <div class="gap-2">
-                            <label for="show-pass" class="text-sm pr-2">show</label>
-                            <input type="checkbox" id="show-pass" class="pass-show form-checkbox rounded-full">
+        <Accordion defaultValue='item-1'>
+            <AccordionItem value="item-1">
+                <AccordionTrigger class="m-4 cursor-pointer">
+                    Sign in to comment
+                </AccordionTrigger>
+                <AccordionContent>
+                    <form name="sign-up" class="form max-w-[60ch] gap-8">
+                        <fieldset class="flex m-4 items-center justify-between gap-4">
+                            <div class="block">
+                                <label class="p-2 text-sm tracking-wide font-system" for="firstname">Firstname</label>
+                                <input type="text" id="firstname" name="firstname" class="form-input w-full rounded-xl px-4 text-black" placeholder="John" />
+                            </div>
+                            <div class="block">
+                                <label for="lastname" class="p-2 text-sm tracking-wide font-system">Lastname</label>
+                                <input type="text" id="lastname" name="lastname" class="form-input w-full rounded-xl px-4 text-black" placeholder="Doe" />
+                            </div>
+                        </fieldset>
+                        <fieldset class="flex flex-col m-4">
+                            <label for="email" class="p-2 text-sm tracking-wide font-system">Email</label>
+                            <input type="email" name="email" id="email" placeholder="johndoe@email.com" class="form-input rounded-xl px-4 text-black" />
+                        </fieldset>
+                        <fieldset class="flex flex-col m-4">
+                            <label for="password" class="flex justify-between items-center p-2 text-sm tracking-wide font-system">
+                                <span class="">Password</span>
+                                {/* <div class="gap-2">
+                                    <label for="show-pass" class="text-sm pr-2">show</label>
+                                    <input type="checkbox" id="show-pass" class="pass-show form-checkbox rounded-full">
+                                </div> */}
+                            </label>
+                            <input type="password" name="password" id="password" placeholder="John@Doe1234" class="form-input rounded-xl px-4 text-black" />
+                        </fieldset>
+                        <div class="fieldset m-4 block content-end justify-items-end">
+                            <button type="submit" class="block content-center justify-items-center btn m-1 p-3 px-6 rounded-xl border-sky-200 dark:border-sky-700 bg-sky-300 dark:bg-sky-900 hover:bg-sky-500 dark:hover:bg-sky-950 border">Signup</button>
                         </div>
-                    </label>
-                    <input type="password" name="password" id="password" placeholder="John@Doe1234" class="form-input rounded-xl px-4 text-black" />
-                </fieldset>
-                <div class="fieldset m-4 block content-end justify-items-end">
-                    <button type="submit" class="block content-center justify-items-center btn m-1 p-3 px-6 rounded-xl border-sky-200 dark:border-sky-700 bg-sky-300 dark:bg-sky-900 hover:bg-sky-500 dark:hover:bg-sky-950 border-1">Signup</button>
-                </div>
-            </form>
-        </details>
+                    </form>
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
     )}
 
-    <div class="block m-2 p-2">
+    <div class="flex flex-col items-center justify-center w-full max-w-3xl m-0 p-0 mt-8">
         {topLevelComments && topLevelComments.map(comment => (
             <CommentItem {...comment} />
             // <pre>{JSON.stringify(comment, null, 2)}</pre>

@@ -1,0 +1,29 @@
+---
+import MainLayout from "@/layouts/main-layout.astro";
+import { titleTemplate } from "@/utils";
+import { getEntry, render } from "astro:content";
+
+const { project } = Astro.params;
+
+if (!project) {
+    throw new Error("Project parameter is missing");
+}
+
+const entry = await getEntry("projects", project);
+
+if (!entry) {
+    return Astro.redirect("/404");
+}
+
+const { title } = entry.data;
+const { Content, headings } = await render(entry);
+---
+
+<MainLayout title={titleTemplate(title, "Projects")}>
+    <main class="block min-h-screen justify-items-center p-4">
+        <h1>{title}</h1>
+        <div class="prose prose-lg prose-p:my-4 prose-p:block prose-p:text-black dark:prose-p:text-white prose-headings:text-sky-950 dark:prose-headings:text-sky-100 prose-h2:my-8 ">
+            <Content class="" />
+        </div>
+    </main>
+</MainLayout>
